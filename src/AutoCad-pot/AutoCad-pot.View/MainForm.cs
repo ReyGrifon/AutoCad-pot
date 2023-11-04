@@ -16,5 +16,7 @@ namespace AutoCad_pot.View
         {
             InitializeComponent();
         }
+
+
     }
 }
