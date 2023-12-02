@@ -5,6 +5,8 @@
     using System.Drawing;
     using System.Windows.Forms;
     using AutoCad_pot.Model;
+    using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+    using TextBox = System.Windows.Forms.TextBox;
 
     /// <summary>
     /// Основной класс формы.
@@ -145,6 +147,41 @@
                 }
 
                 textBox.BackColor = CorrectColor;
+            }
+        }
+
+        private void TextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                if (char.IsControl(e.KeyChar))
+                {
+                    e.Handled = false;
+                    return;
+                }
+
+                if (char.IsDigit(e.KeyChar))
+                {
+                    e.Handled = false;
+                    return;
+                }
+
+                if (e.KeyChar == ',')
+                {
+                    if (textBox.Text == "")
+                    {
+                        e.Handled = true;
+                        return;
+                    }
+
+                    e.Handled = textBox.Text.Contains(",")
+                        ? e.Handled = true
+                        : e.Handled = false;
+
+                    return;
+                }
+
+                e.Handled = true;
             }
         }
     }

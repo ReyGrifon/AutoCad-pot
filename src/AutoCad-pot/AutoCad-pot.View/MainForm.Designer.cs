@@ -147,6 +147,7 @@
             this.PotHeightTextBox.Size = new System.Drawing.Size(100, 20);
             this.PotHeightTextBox.TabIndex = 10;
             this.PotHeightTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.PotHeightTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // PotDiameterTextBox
             // 
@@ -155,6 +156,7 @@
             this.PotDiameterTextBox.Size = new System.Drawing.Size(100, 20);
             this.PotDiameterTextBox.TabIndex = 11;
             this.PotDiameterTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.PotDiameterTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // BottomThicknessTextBox
             // 
@@ -163,6 +165,7 @@
             this.BottomThicknessTextBox.Size = new System.Drawing.Size(100, 20);
             this.BottomThicknessTextBox.TabIndex = 12;
             this.BottomThicknessTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.BottomThicknessTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // WallThicknessTextBox
             // 
@@ -171,6 +174,7 @@
             this.WallThicknessTextBox.Size = new System.Drawing.Size(100, 20);
             this.WallThicknessTextBox.TabIndex = 13;
             this.WallThicknessTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.WallThicknessTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // HandlesThicknessTextBox
             // 
@@ -179,6 +183,7 @@
             this.HandlesThicknessTextBox.Size = new System.Drawing.Size(100, 20);
             this.HandlesThicknessTextBox.TabIndex = 14;
             this.HandlesThicknessTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.HandlesThicknessTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // PotBuildButton
             // 
@@ -197,6 +202,7 @@
             this.HandlesHeightTextBox.Size = new System.Drawing.Size(100, 20);
             this.HandlesHeightTextBox.TabIndex = 16;
             this.HandlesHeightTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.HandlesHeightTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // HandlessThicknessLimitsLabel
             // 
