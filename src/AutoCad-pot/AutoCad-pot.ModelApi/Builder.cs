@@ -97,27 +97,20 @@
         /// </summary>
         public void BuildPot()
         {
-            Region Reg1 = null;
-            DBObjectCollection curves = null;
-            DBObjectCollection regions = null;
-
             Database db = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Database;
-
             using (Transaction trans = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
             {
                 BlockTableRecord MdlSpc = (BlockTableRecord)trans.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db), Autodesk.AutoCAD.DatabaseServices.OpenMode.ForWrite, false, true);
-
-                Solid3d leftHandle = new Solid3d();
-                Solid3d rightHandle = new Solid3d();
                 Solid3d potBase = new Solid3d();
-                curves = new DBObjectCollection();
-                regions = new DBObjectCollection();
-
-                leftHandle = BuildHandle(_parameters.GetValue(ParameterType.PotDiameter));
-                rightHandle = BuildHandle(-_parameters.GetValue(ParameterType.PotDiameter));
                 potBase = BuildBase();
-                potBase.BooleanOperation(BooleanOperationType.BoolUnite, leftHandle);
-                potBase.BooleanOperation(BooleanOperationType.BoolUnite, rightHandle);
+                potBase.BooleanOperation(
+                    BooleanOperationType.BoolUnite,
+                    BuildHandle(_parameters.GetValue(ParameterType.PotDiameter)));
+
+                potBase.BooleanOperation(
+                    BooleanOperationType.BoolUnite,
+                    BuildHandle(-_parameters.GetValue(ParameterType.PotDiameter)));
+
                 potBase.BooleanOperation(BooleanOperationType.BoolSubtract, SubtractPot());
 
                 MdlSpc.AppendEntity(potBase);
