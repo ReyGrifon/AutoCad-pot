@@ -69,7 +69,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -85,16 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icons8-pot-96.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AutoCad-pot.Model\AutoCad-pot.Model.csproj">
-      <Project>{34cee9aa-7c2d-4cc1-befc-382156ba083b}</Project>
-      <Name>AutoCad-pot.Model</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
