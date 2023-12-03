@@ -43,7 +43,7 @@
             this.PotDiameterTextBox = new System.Windows.Forms.TextBox();
             this.BottomThicknessTextBox = new System.Windows.Forms.TextBox();
             this.WallThicknessTextBox = new System.Windows.Forms.TextBox();
-            this.HandlessThicknessTextBox = new System.Windows.Forms.TextBox();
+            this.HandlesThicknessTextBox = new System.Windows.Forms.TextBox();
             this.PotBuildButton = new System.Windows.Forms.Button();
             this.HandlesHeightTextBox = new System.Windows.Forms.TextBox();
             this.HandlessThicknessLimitsLabel = new System.Windows.Forms.Label();
@@ -146,6 +146,8 @@
             this.PotHeightTextBox.Name = "PotHeightTextBox";
             this.PotHeightTextBox.Size = new System.Drawing.Size(100, 20);
             this.PotHeightTextBox.TabIndex = 10;
+            this.PotHeightTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.PotHeightTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // PotDiameterTextBox
             // 
@@ -153,6 +155,8 @@
             this.PotDiameterTextBox.Name = "PotDiameterTextBox";
             this.PotDiameterTextBox.Size = new System.Drawing.Size(100, 20);
             this.PotDiameterTextBox.TabIndex = 11;
+            this.PotDiameterTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.PotDiameterTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // BottomThicknessTextBox
             // 
@@ -160,6 +164,8 @@
             this.BottomThicknessTextBox.Name = "BottomThicknessTextBox";
             this.BottomThicknessTextBox.Size = new System.Drawing.Size(100, 20);
             this.BottomThicknessTextBox.TabIndex = 12;
+            this.BottomThicknessTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.BottomThicknessTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // WallThicknessTextBox
             // 
@@ -167,13 +173,17 @@
             this.WallThicknessTextBox.Name = "WallThicknessTextBox";
             this.WallThicknessTextBox.Size = new System.Drawing.Size(100, 20);
             this.WallThicknessTextBox.TabIndex = 13;
+            this.WallThicknessTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.WallThicknessTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
-            // HandlessThicknessTextBox
+            // HandlesThicknessTextBox
             // 
-            this.HandlessThicknessTextBox.Location = new System.Drawing.Point(137, 146);
-            this.HandlessThicknessTextBox.Name = "HandlessThicknessTextBox";
-            this.HandlessThicknessTextBox.Size = new System.Drawing.Size(100, 20);
-            this.HandlessThicknessTextBox.TabIndex = 14;
+            this.HandlesThicknessTextBox.Location = new System.Drawing.Point(137, 146);
+            this.HandlesThicknessTextBox.Name = "HandlesThicknessTextBox";
+            this.HandlesThicknessTextBox.Size = new System.Drawing.Size(100, 20);
+            this.HandlesThicknessTextBox.TabIndex = 14;
+            this.HandlesThicknessTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.HandlesThicknessTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // PotBuildButton
             // 
@@ -183,6 +193,7 @@
             this.PotBuildButton.TabIndex = 15;
             this.PotBuildButton.Text = "Построить";
             this.PotBuildButton.UseVisualStyleBackColor = true;
+            this.PotBuildButton.Click += new System.EventHandler(this.PotBuildButton_Click);
             // 
             // HandlesHeightTextBox
             // 
@@ -190,6 +201,8 @@
             this.HandlesHeightTextBox.Name = "HandlesHeightTextBox";
             this.HandlesHeightTextBox.Size = new System.Drawing.Size(100, 20);
             this.HandlesHeightTextBox.TabIndex = 16;
+            this.HandlesHeightTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.HandlesHeightTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // HandlessThicknessLimitsLabel
             // 
@@ -219,7 +232,7 @@
             this.Controls.Add(this.HandlessThicknessLimitsLabel);
             this.Controls.Add(this.HandlesHeightTextBox);
             this.Controls.Add(this.PotBuildButton);
-            this.Controls.Add(this.HandlessThicknessTextBox);
+            this.Controls.Add(this.HandlesThicknessTextBox);
             this.Controls.Add(this.WallThicknessTextBox);
             this.Controls.Add(this.BottomThicknessTextBox);
             this.Controls.Add(this.PotDiameterTextBox);
@@ -236,6 +249,8 @@
             this.Controls.Add(this.PotHeightLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "MainForm";
             this.Text = "AutoCad-pot";
             this.ResumeLayout(false);
@@ -259,7 +274,7 @@
         private System.Windows.Forms.TextBox PotDiameterTextBox;
         private System.Windows.Forms.TextBox BottomThicknessTextBox;
         private System.Windows.Forms.TextBox WallThicknessTextBox;
-        private System.Windows.Forms.TextBox HandlessThicknessTextBox;
+        private System.Windows.Forms.TextBox HandlesThicknessTextBox;
         private System.Windows.Forms.Button PotBuildButton;
         private System.Windows.Forms.TextBox HandlesHeightTextBox;
         private System.Windows.Forms.Label HandlessThicknessLimitsLabel;
