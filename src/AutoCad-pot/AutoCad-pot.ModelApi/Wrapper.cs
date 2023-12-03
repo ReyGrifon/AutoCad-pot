@@ -19,7 +19,7 @@
             var dialogResult = form.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                var parameters = form.parameters;
+                var parameters = form.Parameters;
                 var builder = new Builder(parameters);
                 builder.BuildPot();
             }

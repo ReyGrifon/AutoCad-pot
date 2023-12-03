@@ -5,7 +5,6 @@
     using System.Drawing;
     using System.Windows.Forms;
     using AutoCad_pot.Model;
-    using static System.Windows.Forms.VisualStyles.VisualStyleElement;
     using TextBox = System.Windows.Forms.TextBox;
 
     /// <summary>
@@ -32,7 +31,7 @@
         public MainForm()
         {
             InitializeComponent();
-            parameters = new Parameters();
+            Parameters = new Parameters();
             InitializeFields();
             InitializeErrors();
         }
@@ -40,12 +39,17 @@
         /// <summary>
         /// Получить значения поля _parameters.
         /// </summary>
-        public Parameters parameters { get; }
+        public Parameters Parameters { get; }
 
         private void UpdateLabel()
         {
-            HandlesHeightLimitsLabel.Text = Convert.ToString(parameters.GetMinValue(ParameterType.HandlesHeight))
-                + " - " + Convert.ToString(parameters.GetMaxValue(ParameterType.HandlesHeight)) + " mm";
+            HandlesHeightLimitsLabel.Text = Convert.ToString(Parameters.GetMinValue(ParameterType.HandlesHeight))
+                + " - " + Convert.ToString(Parameters.GetMaxValue(ParameterType.HandlesHeight)) + " mm";
+        }
+
+        private void ErrorUpdateLabel()
+        {
+            HandlesHeightLimitsLabel.Text = "x - x mm";
         }
 
         private void InitializeFields()
@@ -73,7 +77,7 @@
                 errors = "";
                 foreach (var error in _errorsList)
                 {
-                    errors += error.ToString() + "\n";
+                    errors += error.ToString() + " is not in the specified range" + "\n";
                 }
 
                 MessageBox.Show(
@@ -93,38 +97,25 @@
         {
             if (sender is TextBox textBox)
             {
-                Validate(textBox);
-
-                if (_fields[textBox] == ParameterType.HandlesThickness)
-                {
-                    Validate(HandlesHeightTextBox);
-                }
+                CheckValueValidate(textBox);
             }
         }
 
-        private void Validate(TextBox textBox)
+        private void CheckValueValidate(TextBox textBox)
         {
-            if (string.IsNullOrWhiteSpace(textBox.Text))
+            if (Parameters.Validate(_fields[textBox], textBox.Text))
             {
-                CheckError(textBox, true);
-                return;
-            }
-
-            if (parameters.Validate(_fields[textBox], Convert.ToDouble(textBox.Text)))
-            {
-                parameters.SetValue(_fields[textBox], Convert.ToDouble(textBox.Text));
+                Parameters.SetValue(_fields[textBox], Convert.ToDouble(textBox.Text));
                 CheckError(textBox, false);
+                if (_fields[textBox] == ParameterType.HandlesThickness)
+                {
+                    CheckValueValidate(HandlesHeightTextBox);
+                    UpdateLabel();
+                }
             }
             else
             {
                 CheckError(textBox, true);
-            }
-
-            if (_fields[textBox] == ParameterType.HandlesThickness)
-            {
-                parameters.UpdateMaxHandlesHeight();
-                parameters.UpdateMinHandlesHeight();
-                UpdateLabel();
             }
         }
 
@@ -138,6 +129,11 @@
                 }
 
                 textBox.BackColor = ErrorColor;
+                if (_fields[textBox] == ParameterType.HandlesThickness)
+                {
+                    CheckError(HandlesHeightTextBox, true);
+                    ErrorUpdateLabel();
+                }
             }
             else
             {

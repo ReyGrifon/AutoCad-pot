@@ -5,11 +5,6 @@
     /// </summary>
     public class Parameter
     {
-        /// <summary>
-        /// Минимальное значение параметра.
-        /// </summary>
-        private double _minValue;
-
         private double _maxValue;
 
         private double _value;
@@ -36,13 +31,9 @@
         }
 
         /// <summary>
-        /// Свойство минимального знаачения.
+        /// Свойство минимального значения.
         /// </summary>
-        public double MinValue
-        {
-            get => _minValue;
-            set => _minValue = value;
-        }
+        public double MinValue { get; set; }
 
         /// <summary>
         /// Свойство максимального значения.
@@ -50,7 +41,7 @@
         public double MaxValue
         {
             get => _maxValue;
-            set => _maxValue = value;
+            set => _maxValue = value <= MinValue ? MinValue : value;
         }
 
         /// <summary>
@@ -59,14 +50,21 @@
         public double Value
         {
             get => _value;
-            set => _value = value;
+            set
+            {
+                if (value >= MinValue || value <= MaxValue)
+                {
+                    _value = value;
+                }
+            }
         }
 
         /// <summary>
-        /// Метод проверяющий число на верность.
+        /// Метод проверяющий число на нахождение в границах min и max.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">проверяемое значение. </param>
+        /// <returns>false, если число не находится в пределах,
+        /// true в обратной ситуации. </returns>
         public bool IsCorrect(double value)
         {
             if (MinValue > value || value > MaxValue)

@@ -9,62 +9,62 @@
     public class Parameters
     {
         /// <summary>
-        /// g.
+        /// Минимальная высота кастрюли.
         /// </summary>
         public const double MinPotHeight = 150;
 
         /// <summary>
-        /// k.
+        /// Максимальная высота кастрюли.
         /// </summary>
         public const double MaxPotHeight = 300;
 
         /// <summary>
-        /// k.
+        /// Минимальный диаметр кастрюли.
         /// </summary>
         public const double MinPotDiameter = 150;
 
         /// <summary>
-        /// k.
+        /// Максимальный диаметр кастрюли.
         /// </summary>
         public const double MaxPotDiameter = 200;
 
         /// <summary>
-        /// k.
+        /// Минимальная толщина дна.
         /// </summary>
         public const double MinBottomThickness = 1;
 
         /// <summary>
-        /// k.
+        /// Максимальная толщина данных.
         /// </summary>
         public const double MaxBottomThickness = 10;
 
         /// <summary>
-        /// k.
+        /// Минимальная толщина стенок.
         /// </summary>
         public const double MinWallThickness = 0.5;
 
         /// <summary>
-        /// k.
+        /// Максимальная толщина стенок.
         /// </summary>
         public const double MaxWallThickness = 3;
 
         /// <summary>
-        /// k.
+        /// Минимальная толщина ручек.
         /// </summary>
         public const double MinHandlesThickness = 3;
 
         /// <summary>
-        /// k.
+        /// Максимальная толщина ручек.
         /// </summary>
         public const double MaxHandlesThickness = 10;
 
         /// <summary>
-        /// k.
+        /// Минимальная высота ручек.
         /// </summary>
         public const double MinHandlesHeight = 0;
 
         /// <summary>
-        /// k.
+        /// Максимальная высота ручек.
         /// </summary>
         public const double MaxHandlesHeight = 0;
 
@@ -123,11 +123,16 @@
         /// <summary>
         /// Задать значение параметра.
         /// </summary>
-        /// <param name="parameterType"></param>
-        /// <param name="newValue"></param>
+        /// <param name="parameterType">Название параметра. </param>
+        /// <param name="newValue">Новое значение для параметра. </param>
         public void SetValue(ParameterType parameterType, double newValue)
         {
             _parameters[parameterType].Value = newValue;
+            if (parameterType == ParameterType.HandlesThickness)
+            {
+                UpdateMaxHandlesHeight();
+                UpdateMinHandlesHeight();
+            }
         }
 
         /// <summary>
@@ -161,14 +166,18 @@
         }
 
         /// <summary>
-        /// Валидатор.
+        /// Валидация значения.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">значение параметра. </param>
         /// <returns></returns>
-        public bool Validate(ParameterType parameterType, double value)
+        public bool Validate(ParameterType parameterType, string value)
         {
-            if (_parameters[parameterType].MinValue > value
-                || value > _parameters[parameterType].MaxValue)
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            if (!_parameters[parameterType].IsCorrect(Convert.ToDouble(value)))
             {
                 return false;
             }

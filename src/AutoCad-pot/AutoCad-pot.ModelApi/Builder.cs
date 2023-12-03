@@ -1,11 +1,9 @@
 ﻿namespace AutoCad_pot.ModelApi
 {
-    using System.Windows.Forms;
     using AutoCad_pot.Model;
     using Autodesk.AutoCAD.ApplicationServices;
     using Autodesk.AutoCAD.DatabaseServices;
     using Autodesk.AutoCAD.Geometry;
-    using acad = Autodesk.AutoCAD.ApplicationServices.Application;
     using CadApplication = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
     /// <summary>
@@ -15,7 +13,7 @@
     {
         private readonly Parameters _parameters;
 
-        private readonly double HandlesHeight = 40;
+        private readonly double _handlesHeight = 40;
 
         /// <summary>
         /// Активный документ (чертеж) в AutoCAD.
@@ -28,9 +26,9 @@
         private Database _database;
 
         /// <summary>
-        /// Констурктор класса с вложенными параметрами.
+        /// Конструктор класса с вложенными параметрами.
         /// </summary>
-        /// <param name="parameters"></param>
+        /// <param name="parameters"> словарь с параметрами модели. </param>
         public Builder(Parameters parameters)
         {
             _parameters = parameters;
@@ -38,82 +36,36 @@
         }
 
         /// <summary>
-        /// Пример.
-        /// </summary>
-        public void Example()
-        {
-            try
-            {
-                // получаем текущий документ и его БД
-                Document acDoc = acad.DocumentManager.MdiActiveDocument;
-                Database acCurDb = acDoc.Database;
-
-                // начинаем транзакцию
-                using (Transaction acTrans = acCurDb.TransactionManager.StartTransaction())
-                {
-                    var curves = new DBObjectCollection();
-                    var regions = new DBObjectCollection();
-
-                    // открываем таблицу блоков документа
-                    BlockTable acBlkTbl;
-                    acBlkTbl = acTrans.GetObject(acCurDb.BlockTableId, OpenMode.ForRead) as BlockTable;
-
-                    // открываем пространство модели (Model Space) - оно является одной из записей в таблице блоков документа
-                    BlockTableRecord btr;
-                    btr = acTrans.GetObject(acBlkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord;
-
-                    Point3d centerCircle = new Point3d(0, 0, 0);
-                    double circleRadius = 100.0;
-                    using (Circle circle = new Circle())
-                    {
-                        circle.Radius = circleRadius;
-                        circle.Center = centerCircle;
-                        btr.AppendEntity(circle);
-                        acTrans.AddNewlyCreatedDBObject(circle, true);
-                        Solid3d solid = new Solid3d();
-                        curves.Add(circle);
-                        regions = Region.CreateFromCurves(curves);
-                        var reg1 = (Region)regions[0];
-                        solid.Extrude(reg1, 100, 0);
-                        acTrans.AddNewlyCreatedDBObject(solid, true);
-                    }
-
-                    // фиксируем изменения
-                    acTrans.Commit();
-                }
-            }
-            catch
-            {
-                MessageBox.Show(
-                    "Невозможно сохранить выбранный файл",
-                    "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-        }
-
-        /// <summary>
-        /// s.
+        /// Строитель модели кастрюли.
         /// </summary>
         public void BuildPot()
         {
-            Database db = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Database;
-            using (Transaction trans = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
+            var yPoint = _parameters.GetValue(ParameterType.PotDiameter);
+            var db = CadApplication.DocumentManager.MdiActiveDocument.Database;
+            using (var trans = CadApplication.DocumentManager.MdiActiveDocument
+                .Database.TransactionManager.StartTransaction())
             {
-                BlockTableRecord MdlSpc = (BlockTableRecord)trans.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db), Autodesk.AutoCAD.DatabaseServices.OpenMode.ForWrite, false, true);
-                Solid3d potBase = new Solid3d();
+                var mdlSpc = (BlockTableRecord)trans.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db), Autodesk.AutoCAD.DatabaseServices.OpenMode.ForWrite, false, true);
+                var potBase = new Solid3d();
                 potBase = BuildBase();
-                potBase.BooleanOperation(
-                    BooleanOperationType.BoolUnite,
-                    BuildHandle(_parameters.GetValue(ParameterType.PotDiameter)));
 
+                var leftHandle = new Solid3d();
+                leftHandle = BuildHandle(yPoint);
                 potBase.BooleanOperation(
                     BooleanOperationType.BoolUnite,
-                    BuildHandle(-_parameters.GetValue(ParameterType.PotDiameter)));
+                    leftHandle);
+
+                yPoint *= -1;
+
+                var rightHandle = new Solid3d();
+                rightHandle = BuildHandle(yPoint);
+                potBase.BooleanOperation(
+                    BooleanOperationType.BoolUnite,
+                    rightHandle);
 
                 potBase.BooleanOperation(BooleanOperationType.BoolSubtract, SubtractPot());
 
-                MdlSpc.AppendEntity(potBase);
+                mdlSpc.AppendEntity(potBase);
                 trans.AddNewlyCreatedDBObject(potBase, true);
 
                 trans.Commit();
@@ -122,28 +74,28 @@
 
         private Solid3d BuildHandle(double value)
         {
-            Database db = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Database;
+            var db = CadApplication.DocumentManager.MdiActiveDocument.Database;
 
-            using (Transaction trans = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
+            using (var trans = CadApplication.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
             {
-                BlockTableRecord MdlSpc = (BlockTableRecord)trans.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db), Autodesk.AutoCAD.DatabaseServices.OpenMode.ForWrite, false, true);
-                var handleRadius = _parameters.GetValue(ParameterType.PotDiameter) / 6d;
-                Solid3d handleSolid = new Solid3d();
-                Solid3d substractSolid = new Solid3d();
-                Circle handle = new Circle(
+                var mdlSpc = (BlockTableRecord)trans.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db), OpenMode.ForWrite, false, true);
+                var handleRadius = _parameters.GetValue(ParameterType.PotDiameter) / 5d;
+                var handleSolid = new Solid3d();
+                var substractSolid = new Solid3d();
+                var handle = new Circle(
                     new Point3d(
                     0,
                     value / 2d,
-                    _parameters.GetValue(ParameterType.PotHeight) - HandlesHeight),
+                    _parameters.GetValue(ParameterType.PotHeight) - _handlesHeight),
                     Vector3d.ZAxis,
                     handleRadius);
                 handleSolid = Extrude(handle);
 
-                Circle substractHandle = new Circle(
+                var substractHandle = new Circle(
                     new Point3d(
                     0,
                     value / 2d,
-                    _parameters.GetValue(ParameterType.PotHeight) - HandlesHeight),
+                    _parameters.GetValue(ParameterType.PotHeight) - _handlesHeight),
                     Vector3d.ZAxis,
                     handleRadius - _parameters.GetValue(ParameterType.HandlesThickness));
                 substractSolid = Extrude(substractHandle);
@@ -155,40 +107,32 @@
         private Solid3d Extrude(Circle circle)
         {
             Solid3d extrudeSolid = new Solid3d();
-            Region region = null;
-            DBObjectCollection curves = null;
-            DBObjectCollection regions = null;
-            curves = new DBObjectCollection();
-            regions = new DBObjectCollection();
+            var curves = new DBObjectCollection();
             curves.Add(circle);
-            regions = Region.CreateFromCurves(curves);
-            region = (Region)regions[0];
+            var regions = Region.CreateFromCurves(curves);
+            var region = (Region)regions[0];
             extrudeSolid.Extrude(region, _parameters.GetValue(ParameterType.HandlesHeight), 0);
             return extrudeSolid;
         }
 
         private Solid3d BuildBase()
         {
-            Region region = null;
-            DBObjectCollection curves = null;
-            DBObjectCollection regions = null;
+            var db = CadApplication.DocumentManager.MdiActiveDocument.Database;
 
-            Database db = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Database;
-
-            using (Transaction trans = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
+            using (var trans = CadApplication.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
             {
-                BlockTableRecord MdlSpc = (BlockTableRecord)trans.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db), Autodesk.AutoCAD.DatabaseServices.OpenMode.ForWrite, false, true);
+                var mdlSpc = (BlockTableRecord)trans.GetObject(SymbolUtilityServices.GetBlockModelSpaceId(db), Autodesk.AutoCAD.DatabaseServices.OpenMode.ForWrite, false, true);
 
-                Solid3d extrudeSolid = new Solid3d();
-                curves = new DBObjectCollection();
-                regions = new DBObjectCollection();
-                Circle PotCircle = new Circle(
+                var extrudeSolid = new Solid3d();
+                var curves = new DBObjectCollection();
+                var regions = new DBObjectCollection();
+                var potCircle = new Circle(
                     new Point3d(0, 0, 0),
                     Vector3d.ZAxis,
                     _parameters.GetValue(ParameterType.PotDiameter) / 2d);
-                curves.Add(PotCircle);
+                curves.Add(potCircle);
                 regions = Region.CreateFromCurves(curves);
-                region = (Region)regions[0];
+                var region = (Region)regions[0];
                 extrudeSolid.Extrude(region, _parameters.GetValue(ParameterType.PotHeight), 0);
                 return extrudeSolid;
             }
@@ -196,19 +140,16 @@
 
         private Solid3d SubtractPot()
         {
-            Solid3d subtractSolid = new Solid3d();
-            Region region = null;
-            DBObjectCollection curves = null;
-            DBObjectCollection regions = null;
-            curves = new DBObjectCollection();
-            regions = new DBObjectCollection();
-            Circle potCircle = new Circle(
+            var subtractSolid = new Solid3d();
+            var curves = new DBObjectCollection();
+            var regions = new DBObjectCollection();
+            var potCircle = new Circle(
                     new Point3d(0, 0, _parameters.GetValue(ParameterType.PotHeight)),
                     Vector3d.ZAxis,
                     (_parameters.GetValue(ParameterType.PotDiameter) - _parameters.GetValue(ParameterType.WallThickness)) / 2d);
             curves.Add(potCircle);
             regions = Region.CreateFromCurves(curves);
-            region = (Region)regions[0];
+            var region = (Region)regions[0];
             subtractSolid.Extrude(region, -(_parameters.GetValue(ParameterType.PotHeight) - _parameters.GetValue(ParameterType.BottomThickness)), 0);
             return subtractSolid;
         }
@@ -222,20 +163,6 @@
                 _database = _document.Database;
 
                 _database.Insunits = UnitsValue.Millimeters;
-        }
-
-        /// <summary>
-        /// Метод, возвращающий таблицу блоков записей.
-        /// </summary>
-        /// <param name="transaction">Текущая транзакция.</param>
-        /// <returns>Таблица блоков записей.</returns>
-        private BlockTableRecord GetBlockTableRecord(Transaction transaction)
-        {
-            var blockTable =
-                transaction.GetObject(_database.BlockTableId, OpenMode.ForRead) as
-                    BlockTable;
-
-            return transaction.GetObject(blockTable[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord;
         }
     }
 }
