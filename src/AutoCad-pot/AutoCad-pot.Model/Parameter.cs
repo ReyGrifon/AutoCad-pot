@@ -10,14 +10,6 @@
         private double _value;
 
         /// <summary>
-        /// Конструктор пустого класса.
-        /// </summary>
-        public Parameter()
-        {
-            // Содержит пустые параметры.
-        }
-
-        /// <summary>
         /// Конструктор класса.
         /// </summary>
         /// <param name="minValue">Минимальное значение параметра.</param>
@@ -52,7 +44,7 @@
             get => _value;
             set
             {
-                if (value >= MinValue || value <= MaxValue)
+                if (value >= MinValue && value <= MaxValue)
                 {
                     _value = value;
                 }

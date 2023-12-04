@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Globalization;
     using System.Windows.Forms;
     using AutoCad_pot.Model;
     using TextBox = System.Windows.Forms.TextBox;
@@ -30,6 +31,7 @@
         /// </summary>
         public MainForm()
         {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
             InitializeComponent();
             Parameters = new Parameters();
             InitializeFields();
@@ -162,7 +164,7 @@
                     return;
                 }
 
-                if (e.KeyChar == ',')
+                if (e.KeyChar == '.')
                 {
                     if (textBox.Text == "")
                     {
@@ -170,7 +172,7 @@
                         return;
                     }
 
-                    e.Handled = textBox.Text.Contains(",")
+                    e.Handled = textBox.Text.Contains(".")
                         ? e.Handled = true
                         : e.Handled = false;
 
