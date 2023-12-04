@@ -55,54 +55,54 @@
             this.PotHeightLabel.AutoSize = true;
             this.PotHeightLabel.Location = new System.Drawing.Point(12, 9);
             this.PotHeightLabel.Name = "PotHeightLabel";
-            this.PotHeightLabel.Size = new System.Drawing.Size(97, 13);
+            this.PotHeightLabel.Size = new System.Drawing.Size(57, 13);
             this.PotHeightLabel.TabIndex = 0;
-            this.PotHeightLabel.Text = "Высота кастрюли";
+            this.PotHeightLabel.Text = "Pot Height";
             // 
             // PotDiameterLabel
             // 
             this.PotDiameterLabel.AutoSize = true;
             this.PotDiameterLabel.Location = new System.Drawing.Point(12, 44);
             this.PotDiameterLabel.Name = "PotDiameterLabel";
-            this.PotDiameterLabel.Size = new System.Drawing.Size(105, 13);
+            this.PotDiameterLabel.Size = new System.Drawing.Size(68, 13);
             this.PotDiameterLabel.TabIndex = 1;
-            this.PotDiameterLabel.Text = "Диаметр кастрюли";
+            this.PotDiameterLabel.Text = "Pot Diameter";
             // 
             // BottomThicknessLabel
             // 
             this.BottomThicknessLabel.AutoSize = true;
             this.BottomThicknessLabel.Location = new System.Drawing.Point(12, 79);
             this.BottomThicknessLabel.Name = "BottomThicknessLabel";
-            this.BottomThicknessLabel.Size = new System.Drawing.Size(74, 13);
+            this.BottomThicknessLabel.Size = new System.Drawing.Size(92, 13);
             this.BottomThicknessLabel.TabIndex = 2;
-            this.BottomThicknessLabel.Text = "Толщина дна";
+            this.BottomThicknessLabel.Text = "Bottom Thickness";
             // 
             // HandlesHeightLabel
             // 
             this.HandlesHeightLabel.AutoSize = true;
             this.HandlesHeightLabel.Location = new System.Drawing.Point(12, 184);
             this.HandlesHeightLabel.Name = "HandlesHeightLabel";
-            this.HandlesHeightLabel.Size = new System.Drawing.Size(76, 13);
+            this.HandlesHeightLabel.Size = new System.Drawing.Size(80, 13);
             this.HandlesHeightLabel.TabIndex = 3;
-            this.HandlesHeightLabel.Text = "Высота ручек";
+            this.HandlesHeightLabel.Text = "Handles Height";
             // 
             // WallThicknessLabel
             // 
             this.WallThicknessLabel.AutoSize = true;
             this.WallThicknessLabel.Location = new System.Drawing.Point(12, 114);
             this.WallThicknessLabel.Name = "WallThicknessLabel";
-            this.WallThicknessLabel.Size = new System.Drawing.Size(91, 13);
+            this.WallThicknessLabel.Size = new System.Drawing.Size(80, 13);
             this.WallThicknessLabel.TabIndex = 4;
-            this.WallThicknessLabel.Text = "Толщина стенок";
+            this.WallThicknessLabel.Text = "Wall Thickness";
             // 
             // HandlessThicknessLabel
             // 
             this.HandlessThicknessLabel.AutoSize = true;
             this.HandlessThicknessLabel.Location = new System.Drawing.Point(12, 149);
             this.HandlessThicknessLabel.Name = "HandlessThicknessLabel";
-            this.HandlessThicknessLabel.Size = new System.Drawing.Size(84, 13);
+            this.HandlessThicknessLabel.Size = new System.Drawing.Size(98, 13);
             this.HandlessThicknessLabel.TabIndex = 5;
-            this.HandlessThicknessLabel.Text = "Толщина ручек";
+            this.HandlessThicknessLabel.Text = "Handles Thickness";
             // 
             // PotHeightLimitsLabel
             // 
@@ -111,7 +111,7 @@
             this.PotHeightLimitsLabel.Name = "PotHeightLimitsLabel";
             this.PotHeightLimitsLabel.Size = new System.Drawing.Size(71, 13);
             this.PotHeightLimitsLabel.TabIndex = 6;
-            this.PotHeightLimitsLabel.Text = "150 - 300 мм";
+            this.PotHeightLimitsLabel.Text = "150 - 300 mm";
             // 
             // PotDiameterLimitsLabel
             // 
@@ -120,7 +120,7 @@
             this.PotDiameterLimitsLabel.Name = "PotDiameterLimitsLabel";
             this.PotDiameterLimitsLabel.Size = new System.Drawing.Size(71, 13);
             this.PotDiameterLimitsLabel.TabIndex = 7;
-            this.PotDiameterLimitsLabel.Text = "150 - 200 мм";
+            this.PotDiameterLimitsLabel.Text = "150 - 200 mm";
             // 
             // BottomThicknessLimitsLabel
             // 
@@ -129,7 +129,7 @@
             this.BottomThicknessLimitsLabel.Name = "BottomThicknessLimitsLabel";
             this.BottomThicknessLimitsLabel.Size = new System.Drawing.Size(53, 13);
             this.BottomThicknessLimitsLabel.TabIndex = 8;
-            this.BottomThicknessLimitsLabel.Text = "1 - 10 мм";
+            this.BottomThicknessLimitsLabel.Text = "1 - 10 mm";
             // 
             // WallThicknessLimitsLabel
             // 
@@ -138,7 +138,7 @@
             this.WallThicknessLimitsLabel.Name = "WallThicknessLimitsLabel";
             this.WallThicknessLimitsLabel.Size = new System.Drawing.Size(56, 13);
             this.WallThicknessLimitsLabel.TabIndex = 9;
-            this.WallThicknessLimitsLabel.Text = "0.5 - 3 мм";
+            this.WallThicknessLimitsLabel.Text = "0.5 - 3 mm";
             // 
             // PotHeightTextBox
             // 
@@ -211,7 +211,7 @@
             this.HandlessThicknessLimitsLabel.Name = "HandlessThicknessLimitsLabel";
             this.HandlessThicknessLimitsLabel.Size = new System.Drawing.Size(53, 13);
             this.HandlessThicknessLimitsLabel.TabIndex = 17;
-            this.HandlessThicknessLimitsLabel.Text = "3 - 10 мм";
+            this.HandlessThicknessLimitsLabel.Text = "3 - 10 mm";
             // 
             // HandlesHeightLimitsLabel
             // 
@@ -220,7 +220,7 @@
             this.HandlesHeightLimitsLabel.Name = "HandlesHeightLimitsLabel";
             this.HandlesHeightLimitsLabel.Size = new System.Drawing.Size(45, 13);
             this.HandlesHeightLimitsLabel.TabIndex = 18;
-            this.HandlesHeightLimitsLabel.Text = "x - x мм";
+            this.HandlesHeightLimitsLabel.Text = "x - x mm";
             // 
             // MainForm
             // 

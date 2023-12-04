@@ -12,7 +12,7 @@
         /// <summary>
         /// Метод, вызывающий MainForm.
         /// </summary>
-        [CommandMethod("demo")]
+        [CommandMethod("BuildPot")]
         public void BuildPot()
         {
             var form = new MainForm();
@@ -31,7 +31,7 @@
         public void Initialize()
         {
             MessageBox.Show(
-                "Плагин загружен. Введите команду 'demo' для работы с плагином",
+                "Плагин загружен. Введите команду 'BuildPot' для работы с плагином",
                 "Info",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
