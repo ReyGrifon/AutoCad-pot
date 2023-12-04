@@ -36,6 +36,7 @@
             Parameters = new Parameters();
             InitializeFields();
             InitializeErrors();
+            UpdateLabel();
         }
 
         /// <summary>
@@ -45,8 +46,12 @@
 
         private void UpdateLabel()
         {
-            HandlesHeightLimitsLabel.Text = Convert.ToString(Parameters.GetMinValue(ParameterType.HandlesHeight))
-                + " - " + Convert.ToString(Parameters.GetMaxValue(ParameterType.HandlesHeight)) + " mm";
+            HandlesHeightLimitsLabel.Text = 
+                Convert.ToString(
+                    Math.Round(Parameters.GetMinValue(ParameterType.HandlesHeight), 2))
+                + " - " + 
+                Convert.ToString(
+                    Math.Round(Parameters.GetMaxValue(ParameterType.HandlesHeight), 2)) + " mm";
         }
 
         private void ErrorUpdateLabel()
