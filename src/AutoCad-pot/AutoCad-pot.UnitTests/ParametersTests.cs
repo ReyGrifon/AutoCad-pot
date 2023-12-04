@@ -9,13 +9,8 @@
     [TestFixture(Description = "Модульные тесты класса Parameter.")]
     public class ParametersTests
     {
-        private Parameters _parameters;
 
-        [SetUp]
-        public void CreateParameters()
-        {
-            _parameters = new Parameters();
-        }
+        private Parameters Parameters => new Parameters();
 
         [TestCase(ParameterType.PotHeight, Parameters.MinPotHeight,
             "Метод возвращает некорректное минимальное значение параметра PotHeight.",
@@ -24,7 +19,8 @@
         public void Test_GetMinValue_CorrectValue(ParameterType parameterType,
             double expectedValue, string message)
         {
-            var actualValue = _parameters.GetMinValue(parameterType);
+            var tmpParameters = Parameters;
+            var actualValue = tmpParameters.GetMinValue(parameterType);
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
@@ -35,7 +31,8 @@
         public void Test_GetMaxValue_CorrectValue(ParameterType parameterType,
             double expectedValue, string message)
         {
-            var actualValue = _parameters.GetMaxValue(parameterType);
+            var tmpParameters = Parameters;
+            var actualValue = tmpParameters.GetMaxValue(parameterType);
             Assert.AreEqual(expectedValue, actualValue, message);
         }
         [TestCase(3,2, "Метод возвращает некорректное максимальное "
@@ -48,8 +45,9 @@
             double exceptedValue,
             string message)
         {
-            _parameters.SetValue(ParameterType.HandlesThickness, value);
-            var actualValue = _parameters.GetMaxValue(ParameterType.HandlesHeight);
+            var tmpParameters = Parameters;
+            tmpParameters.SetValue(ParameterType.HandlesThickness, value);
+            var actualValue = tmpParameters.GetMaxValue(ParameterType.HandlesHeight);
             Assert.AreEqual(exceptedValue, actualValue, message);
         }
         [TestCase(ParameterType.PotHeight, 170,
@@ -57,8 +55,9 @@
         public void Test_SetValue_CorrectValue(ParameterType parameterType,
             double expectedValue, string message)
         {
-            _parameters.SetValue(parameterType, expectedValue);
-            var actualValue = _parameters.GetValue(parameterType);
+            var tmpParameters = Parameters;
+            tmpParameters.SetValue(parameterType, expectedValue);
+            var actualValue = tmpParameters.GetValue(parameterType);
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
@@ -67,8 +66,9 @@
         public void Test_SetValue_WrongValue(ParameterType parameterType,
             double unexpectedValue, string message)
         {
-            _parameters.SetValue(parameterType, unexpectedValue);
-            var actualValue = _parameters.GetValue(parameterType);
+            var tmpParameters = Parameters;
+            tmpParameters.SetValue(parameterType, unexpectedValue);
+            var actualValue = tmpParameters.GetValue(parameterType);
             Assert.AreNotEqual(unexpectedValue, actualValue, message);
         }
 
@@ -82,8 +82,9 @@
             double exceptedValue,
             string message)
         {
-            _parameters.SetValue(ParameterType.HandlesThickness, value);
-            var actualValue = _parameters.GetMinValue(ParameterType.HandlesHeight);
+            var tmpParameters = Parameters;
+            tmpParameters.SetValue(ParameterType.HandlesThickness, value);
+            var actualValue = tmpParameters.GetMinValue(ParameterType.HandlesHeight);
             Assert.AreEqual(exceptedValue, actualValue, message);
         }
 
@@ -94,7 +95,8 @@
         public void Test_GetValue_CorrectValue(ParameterType parameterType,
             double expectedValue, string message)
         {
-            var actualValue = _parameters.GetValue(parameterType);
+            var tmpParameters = Parameters;
+            var actualValue = tmpParameters.GetValue(parameterType);
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
@@ -105,7 +107,8 @@
         public void Test_Validate_CorrectValue(ParameterType parameterType, string value,
             string message)
         {
-            Assert.IsTrue(_parameters.Validate(parameterType, value), message);
+            var tmpParameters = Parameters;
+            Assert.IsTrue(tmpParameters.Validate(parameterType, value), message);
         }
 
         [TestCase(ParameterType.PotHeight, "",
@@ -119,7 +122,8 @@
         public void Test_Validate_WrongValue(ParameterType parameterType, string value,
             string message)
         {
-            Assert.IsFalse(_parameters.Validate(parameterType, value), message);
+            var tmpParameters = Parameters;
+            Assert.IsFalse(tmpParameters.Validate(parameterType, value), message);
         }
     }
 }

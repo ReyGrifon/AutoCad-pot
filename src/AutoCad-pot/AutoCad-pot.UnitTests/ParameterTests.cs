@@ -13,16 +13,7 @@ namespace AutoCad_pot.UnitTests
         private const double MaxValue = 99;
         private const double Value = 30;
 
-        private Parameter _parameter;
-
-        /// <summary>
-        /// Предустановка параметра.
-        /// </summary>
-        [SetUp]
-        public void CreateTestParameter()
-        {
-            _parameter = new Parameter(MinValue, MaxValue, Value);
-        }
+        private Parameter Parameter => new Parameter(MinValue, MaxValue, Value);
 
         [TestCase(
             MinValue,
@@ -55,16 +46,18 @@ namespace AutoCad_pot.UnitTests
         public void Test_MaxValue_Set_WrongValue(double value, double expectedValue,
             string message)
         {
-            _parameter.MaxValue = value;
-            Assert.AreEqual(expectedValue, _parameter.MaxValue, message);
+            var tmpParameter = Parameter;
+            tmpParameter.MaxValue = value;
+            Assert.AreEqual(expectedValue, tmpParameter.MaxValue, message);
         }
 
         [TestCase(100, "Геттер возвращает некорректное значение.",
             TestName = "Позитивный тест геттера свойства MaxValue.")]
         public void Test_MaxValue_Get_CorrectValue(double expectedValue, string message)
         {
-            _parameter.MaxValue = expectedValue;
-            var actual = _parameter.MaxValue;
+            var tmpParameter = Parameter;
+            tmpParameter.MaxValue = expectedValue;
+            var actual = tmpParameter.MaxValue;
             Assert.AreEqual(expectedValue, actual, message);
         }
 
@@ -82,30 +75,31 @@ namespace AutoCad_pot.UnitTests
         public void Test_Value_Set_CorrectValue(double value, double expectedValue,
             string message)
         {
-            _parameter.Value = value;
-            Assert.AreEqual(expectedValue, _parameter.Value, message);
+            var tmpParameter = Parameter;
+            tmpParameter.Value = value;
+            Assert.AreEqual(expectedValue, tmpParameter.Value, message);
         }
 
         [TestCase(Value, "Геттер возвращает некорректное значение.",
             TestName = "Позитивный тест геттера свойства Value.")]
         public void Test_Value_Get_CorrectValue(double expectedValue, string message)
         {
-            _parameter.Value = expectedValue;
-            var actual = _parameter.Value;
+            var tmpParameter = Parameter;
+            tmpParameter.Value = expectedValue;
+            var actual = tmpParameter.Value;
             Assert.AreEqual(expectedValue, actual, message);
         }
 
         [TestCase(
-            MaxValue,
-            MinValue,
-            MaxValue,
+            9999,
             "Ошибка при сравнении.",
             TestName = "Негативный тест метода Equals.")]
         public void Test_EqualsParameter_WrongValue(
-            double minValue, double maxValue, double value, string message)
+            double value,
+            string message)
         {
-            var actualParameter = new Parameter(minValue, maxValue, value);
-            Assert.IsFalse(actualParameter.IsCorrect(Value), message);
+            var tmpParameter = Parameter;
+            Assert.IsFalse(tmpParameter.IsCorrect(value), message);
         }
 
         [TestCase(
@@ -113,8 +107,8 @@ namespace AutoCad_pot.UnitTests
             TestName = "Позитивный тест метода Equals.")]
         public void Test_EqualsParameter_CorrectValue(string message)
         {
-            var actualParameter = new Parameter(MinValue, MaxValue, Value);
-            Assert.IsTrue(actualParameter.IsCorrect(Value), message);
+            var tmpParameter = Parameter;
+            Assert.IsTrue(tmpParameter.IsCorrect(Value), message);
         }
     }
 }
