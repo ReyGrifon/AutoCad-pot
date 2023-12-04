@@ -61,12 +61,12 @@
         /// <summary>
         /// Минимальная высота ручек.
         /// </summary>
-        public const double MinHandlesHeight = 0;
+        public const double MinHandlesHeight = 1.5;
 
         /// <summary>
         /// Максимальная высота ручек.
         /// </summary>
-        public const double MaxHandlesHeight = 0;
+        public const double MaxHandlesHeight = 2;
 
         /// <summary>
         /// Словарь с параметрам модели.
@@ -168,8 +168,10 @@
         /// <summary>
         /// Валидация значения.
         /// </summary>
-        /// <param name="value">значение параметра. </param>
-        /// <returns></returns>
+        /// <param name="parameterType">тип проверяемого параметра</param>
+        /// <param name="value">проверяемое значение</param>
+        /// <returns>true, если значение прошло проверку,
+        /// false в обратном случае</returns>
         public bool Validate(ParameterType parameterType, string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -192,7 +194,7 @@
         public void UpdateMaxHandlesHeight()
         {
             _parameters[ParameterType.HandlesHeight].MaxValue =
-                Math.Round(2 * _parameters[ParameterType.HandlesThickness].Value / 3, 2);
+                2 * _parameters[ParameterType.HandlesThickness].Value / 3;
         }
 
         /// <summary>
@@ -202,7 +204,7 @@
         public void UpdateMinHandlesHeight()
         {
             _parameters[ParameterType.HandlesHeight].MinValue =
-                Math.Round(_parameters[ParameterType.HandlesThickness].Value / 2, 2);
+                _parameters[ParameterType.HandlesThickness].Value / 2;
         }
     }
 }
