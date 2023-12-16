@@ -73,11 +73,14 @@
         /// </summary>
         private readonly Dictionary<ParameterType, Parameter> _parameters;
 
+        public bool HandleType { get; set; }
+
         /// <summary>
         /// Конструктор словаря с параметрами.
         /// </summary>
         public Parameters()
         {
+            HandleType = true;
             _parameters =
                new Dictionary<ParameterType, Parameter>
                {

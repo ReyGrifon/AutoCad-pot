@@ -44,6 +44,8 @@
         /// </summary>
         public Parameters Parameters { get; }
 
+        public string HandleType { get;  }
+
         private void UpdateLabel()
         {
             HandlesHeightLimitsLabel.Text = 
@@ -114,7 +116,7 @@
             {
                 Parameters.SetValue(_fields[textBox], Convert.ToDouble(textBox.Text));
                 CheckError(textBox, false);
-                if (_fields[textBox] == ParameterType.HandlesThickness)
+                if (_fields[textBox] == ParameterType.HandlesThickness && Parameters.HandleType)
                 {
                     CheckValueValidate(HandlesHeightTextBox);
                     UpdateLabel();
@@ -136,7 +138,7 @@
                 }
 
                 textBox.BackColor = ErrorColor;
-                if (_fields[textBox] == ParameterType.HandlesThickness)
+                if (_fields[textBox] == ParameterType.HandlesThickness && Parameters.HandleType)
                 {
                     CheckError(HandlesHeightTextBox, true);
                     ErrorUpdateLabel();
@@ -186,6 +188,24 @@
 
                 e.Handled = true;
             }
+        }
+
+        private void HandlePotRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            Parameters.HandleType = true;
+            HandlesHeightLabel.Visible = true;
+            HandlesHeightTextBox.Visible = true;
+            HandlesHeightLimitsLabel.Visible = true;
+            CheckValueValidate(HandlesHeightTextBox);
+            UpdateLabel();
+        }
+
+        private void SaucepanRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            Parameters.HandleType = false;
+            HandlesHeightLabel.Visible = false;
+            HandlesHeightTextBox.Visible = false;
+            HandlesHeightLimitsLabel.Visible = false;
         }
     }
 }

@@ -13,7 +13,9 @@
     {
         private readonly Parameters _parameters;
 
-        private readonly double _handlesHeight = 40;
+        private readonly string _handleType;
+
+        private readonly double _handlesTopDistance = 40;
 
         /// <summary>
         /// Активный документ (чертеж) в AutoCAD.
@@ -47,23 +49,30 @@
                 var blockTableRecord = GetBlockTableRecord(transaction);
                 var potBase = new Solid3d();
                 potBase = BuildBase();
+                if (_parameters.HandleType)
+                {
+                    var leftHandle = new Solid3d();
+                    leftHandle = BuildHandle(yPoint);
+                    potBase.BooleanOperation(
+                        BooleanOperationType.BoolUnite,
+                        leftHandle);
 
-                var leftHandle = new Solid3d();
-                leftHandle = BuildHandle(yPoint);
-                potBase.BooleanOperation(
-                    BooleanOperationType.BoolUnite,
-                    leftHandle);
+                    yPoint *= -1;
 
-                yPoint *= -1;
-
-                var rightHandle = new Solid3d();
-                rightHandle = BuildHandle(yPoint);
-                potBase.BooleanOperation(
-                    BooleanOperationType.BoolUnite,
-                    rightHandle);
+                    var rightHandle = new Solid3d();
+                    rightHandle = BuildHandle(yPoint);
+                    potBase.BooleanOperation(
+                        BooleanOperationType.BoolUnite,
+                        rightHandle);
+                }
+                else
+                {
+                    var SausepanHandle = new Solid3d();
+                    SausepanHandle = BuildSausepan();
+                    potBase.BooleanOperation(BooleanOperationType.BoolUnite, SausepanHandle);
+                }
 
                 potBase.BooleanOperation(BooleanOperationType.BoolSubtract, SubtractPot());
-
                 blockTableRecord.AppendEntity(potBase);
                 transaction.AddNewlyCreatedDBObject(potBase, true);
 
@@ -83,7 +92,7 @@
                     new Point3d(
                     0,
                     value / 2d,
-                    _parameters.GetValue(ParameterType.PotHeight) - _handlesHeight),
+                    _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance),
                     Vector3d.ZAxis,
                     handleRadius);
                 handleSolid = ExtrudeCircle(handle);
@@ -92,7 +101,7 @@
                     new Point3d(
                     0,
                     value / 2d,
-                    _parameters.GetValue(ParameterType.PotHeight) - _handlesHeight),
+                    _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance),
                     Vector3d.ZAxis,
                     handleRadius - _parameters.GetValue(ParameterType.HandlesThickness));
                 substractSolid = ExtrudeCircle(substractHandle);
@@ -150,6 +159,34 @@
             var region = (Region)regions[0];
             subtractSolid.Extrude(region, heightSubstractCircle, 0);
             return subtractSolid;
+        }
+
+        private Solid3d BuildSausepan()
+        {
+            Point3d[] polypts = new Point3d[4];
+            double[] DblBulges = new double[4];
+            using (var transaction =
+                _database.TransactionManager.StartTransaction())
+            {
+                DoubleCollection d = new DoubleCollection(DblBulges);
+                polypts[0] = new Point3d(10, 0, _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance);
+                polypts[1] = new Point3d(-10, 0, _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance);
+                polypts[2] = new Point3d(-10, 200, _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance);
+                polypts[3] = new Point3d(10, 200, _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance);
+                var pointCol = new Point3dCollection(polypts);
+                var tmpSol = new Solid3d();
+
+                var outline = new Polyline3d(Poly3dType.SimplePoly, pointCol, true);
+                var Curves = new DBObjectCollection();
+                var Regions = new DBObjectCollection();
+
+                Curves.Add(outline);
+                Regions = Region.CreateFromCurves(Curves);
+                var Reg1 = (Region)Regions[0];
+
+                tmpSol.Extrude(Reg1, _parameters.GetValue(ParameterType.HandlesThickness), 0);
+                return tmpSol;
+            }
         }
 
         /// <summary>

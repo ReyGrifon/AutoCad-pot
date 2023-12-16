@@ -48,6 +48,10 @@
             this.HandlesHeightTextBox = new System.Windows.Forms.TextBox();
             this.HandlessThicknessLimitsLabel = new System.Windows.Forms.Label();
             this.HandlesHeightLimitsLabel = new System.Windows.Forms.Label();
+            this.HandleTypeGroupBox = new System.Windows.Forms.GroupBox();
+            this.SaucepanRadioButton = new System.Windows.Forms.RadioButton();
+            this.HandlePotRadioButton = new System.Windows.Forms.RadioButton();
+            this.HandleTypeGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // PotHeightLabel
@@ -80,7 +84,7 @@
             // HandlesHeightLabel
             // 
             this.HandlesHeightLabel.AutoSize = true;
-            this.HandlesHeightLabel.Location = new System.Drawing.Point(12, 184);
+            this.HandlesHeightLabel.Location = new System.Drawing.Point(12, 231);
             this.HandlesHeightLabel.Name = "HandlesHeightLabel";
             this.HandlesHeightLabel.Size = new System.Drawing.Size(80, 13);
             this.HandlesHeightLabel.TabIndex = 3;
@@ -98,7 +102,7 @@
             // HandlessThicknessLabel
             // 
             this.HandlessThicknessLabel.AutoSize = true;
-            this.HandlessThicknessLabel.Location = new System.Drawing.Point(12, 149);
+            this.HandlessThicknessLabel.Location = new System.Drawing.Point(12, 196);
             this.HandlessThicknessLabel.Name = "HandlessThicknessLabel";
             this.HandlessThicknessLabel.Size = new System.Drawing.Size(98, 13);
             this.HandlessThicknessLabel.TabIndex = 5;
@@ -166,7 +170,7 @@
             this.BottomThicknessTextBox.Name = "BottomThicknessTextBox";
             this.BottomThicknessTextBox.Size = new System.Drawing.Size(100, 20);
             this.BottomThicknessTextBox.TabIndex = 12;
-            this.BottomThicknessTextBox.Text = "150";
+            this.BottomThicknessTextBox.Text = "1";
             this.BottomThicknessTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
             this.BottomThicknessTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
@@ -176,13 +180,13 @@
             this.WallThicknessTextBox.Name = "WallThicknessTextBox";
             this.WallThicknessTextBox.Size = new System.Drawing.Size(100, 20);
             this.WallThicknessTextBox.TabIndex = 13;
-            this.WallThicknessTextBox.Text = "150";
+            this.WallThicknessTextBox.Text = "0.5";
             this.WallThicknessTextBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
             this.WallThicknessTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
             // 
             // HandlesThicknessTextBox
             // 
-            this.HandlesThicknessTextBox.Location = new System.Drawing.Point(137, 146);
+            this.HandlesThicknessTextBox.Location = new System.Drawing.Point(137, 193);
             this.HandlesThicknessTextBox.Name = "HandlesThicknessTextBox";
             this.HandlesThicknessTextBox.Size = new System.Drawing.Size(100, 20);
             this.HandlesThicknessTextBox.TabIndex = 14;
@@ -192,7 +196,7 @@
             // 
             // PotBuildButton
             // 
-            this.PotBuildButton.Location = new System.Drawing.Point(137, 235);
+            this.PotBuildButton.Location = new System.Drawing.Point(135, 252);
             this.PotBuildButton.Name = "PotBuildButton";
             this.PotBuildButton.Size = new System.Drawing.Size(80, 24);
             this.PotBuildButton.TabIndex = 15;
@@ -202,7 +206,7 @@
             // 
             // HandlesHeightTextBox
             // 
-            this.HandlesHeightTextBox.Location = new System.Drawing.Point(137, 181);
+            this.HandlesHeightTextBox.Location = new System.Drawing.Point(137, 228);
             this.HandlesHeightTextBox.Name = "HandlesHeightTextBox";
             this.HandlesHeightTextBox.Size = new System.Drawing.Size(100, 20);
             this.HandlesHeightTextBox.TabIndex = 16;
@@ -213,7 +217,7 @@
             // HandlessThicknessLimitsLabel
             // 
             this.HandlessThicknessLimitsLabel.AutoSize = true;
-            this.HandlessThicknessLimitsLabel.Location = new System.Drawing.Point(243, 149);
+            this.HandlessThicknessLimitsLabel.Location = new System.Drawing.Point(243, 196);
             this.HandlessThicknessLimitsLabel.Name = "HandlessThicknessLimitsLabel";
             this.HandlessThicknessLimitsLabel.Size = new System.Drawing.Size(53, 13);
             this.HandlessThicknessLimitsLabel.TabIndex = 17;
@@ -222,18 +226,54 @@
             // HandlesHeightLimitsLabel
             // 
             this.HandlesHeightLimitsLabel.AutoSize = true;
-            this.HandlesHeightLimitsLabel.Location = new System.Drawing.Point(243, 184);
+            this.HandlesHeightLimitsLabel.Location = new System.Drawing.Point(243, 231);
             this.HandlesHeightLimitsLabel.Name = "HandlesHeightLimitsLabel";
             this.HandlesHeightLimitsLabel.Size = new System.Drawing.Size(45, 13);
             this.HandlesHeightLimitsLabel.TabIndex = 18;
             this.HandlesHeightLimitsLabel.Text = "x - x mm";
+            // 
+            // HandleTypeGroupBox
+            // 
+            this.HandleTypeGroupBox.Controls.Add(this.SaucepanRadioButton);
+            this.HandleTypeGroupBox.Controls.Add(this.HandlePotRadioButton);
+            this.HandleTypeGroupBox.Location = new System.Drawing.Point(15, 137);
+            this.HandleTypeGroupBox.Name = "HandleTypeGroupBox";
+            this.HandleTypeGroupBox.Size = new System.Drawing.Size(299, 46);
+            this.HandleTypeGroupBox.TabIndex = 19;
+            this.HandleTypeGroupBox.TabStop = false;
+            this.HandleTypeGroupBox.Text = "Handle Type";
+            // 
+            // SaucepanRadioButton
+            // 
+            this.SaucepanRadioButton.AutoSize = true;
+            this.SaucepanRadioButton.Location = new System.Drawing.Point(122, 20);
+            this.SaucepanRadioButton.Name = "SaucepanRadioButton";
+            this.SaucepanRadioButton.Size = new System.Drawing.Size(109, 17);
+            this.SaucepanRadioButton.TabIndex = 1;
+            this.SaucepanRadioButton.Text = "Saucepan handle";
+            this.SaucepanRadioButton.UseVisualStyleBackColor = true;
+            this.SaucepanRadioButton.CheckedChanged += new System.EventHandler(this.SaucepanRadioButton_CheckedChanged);
+            // 
+            // HandlePotRadioButton
+            // 
+            this.HandlePotRadioButton.AutoSize = true;
+            this.HandlePotRadioButton.Checked = true;
+            this.HandlePotRadioButton.Location = new System.Drawing.Point(7, 20);
+            this.HandlePotRadioButton.Name = "HandlePotRadioButton";
+            this.HandlePotRadioButton.Size = new System.Drawing.Size(76, 17);
+            this.HandlePotRadioButton.TabIndex = 0;
+            this.HandlePotRadioButton.TabStop = true;
+            this.HandlePotRadioButton.Text = "Pot handle";
+            this.HandlePotRadioButton.UseVisualStyleBackColor = true;
+            this.HandlePotRadioButton.CheckedChanged += new System.EventHandler(this.HandlePotRadioButton_CheckedChanged);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(334, 271);
+            this.ClientSize = new System.Drawing.Size(334, 288);
+            this.Controls.Add(this.HandleTypeGroupBox);
             this.Controls.Add(this.HandlesHeightLimitsLabel);
             this.Controls.Add(this.HandlessThicknessLimitsLabel);
             this.Controls.Add(this.HandlesHeightTextBox);
@@ -259,6 +299,8 @@
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.Text = "AutoCad-pot";
+            this.HandleTypeGroupBox.ResumeLayout(false);
+            this.HandleTypeGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -285,6 +327,9 @@
         private System.Windows.Forms.TextBox HandlesHeightTextBox;
         private System.Windows.Forms.Label HandlessThicknessLimitsLabel;
         private System.Windows.Forms.Label HandlesHeightLimitsLabel;
+        private System.Windows.Forms.GroupBox HandleTypeGroupBox;
+        private System.Windows.Forms.RadioButton SaucepanRadioButton;
+        private System.Windows.Forms.RadioButton HandlePotRadioButton;
     }
 }
 
