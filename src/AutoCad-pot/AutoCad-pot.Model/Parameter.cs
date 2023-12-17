@@ -1,11 +1,12 @@
 ﻿namespace AutoCad_pot.Model
 {
+    using System;
+
     /// <summary>
     /// Класс параметра модели.
     /// </summary>
     public class Parameter
     {
-        private double _maxValue;
 
         private double _value;
 
@@ -30,11 +31,7 @@
         /// <summary>
         /// Свойство максимального значения.
         /// </summary>
-        public double MaxValue
-        {
-            get => _maxValue;
-            set => _maxValue = value <= MinValue ? MinValue : value;
-        }
+        public double MaxValue { get; set; }
 
         /// <summary>
         /// Свойство значения параметра.
@@ -44,10 +41,8 @@
             get => _value;
             set
             {
-                if (value >= MinValue && value <= MaxValue)
-                {
-                    _value = value;
-                }
+                Validate(value);
+                _value = value;
             }
         }
 
@@ -57,14 +52,19 @@
         /// <param name="value">проверяемое значение. </param>
         /// <returns>false, если число не находится в пределах,
         /// true в обратной ситуации. </returns>
-        public bool IsCorrect(double value)
+        public void Validate(double value)
         {
-            if (MinValue > value || value > MaxValue)
+            if (MinValue == MaxValue)
             {
-                return false;
+                throw new ArgumentException(
+                    $": Main parameter entered incorrectly.\n");
             }
 
-            return true;
+            if (MinValue > value || value > MaxValue)
+            {
+                throw new ArgumentException(
+                    $" is not in the range {MinValue}-{MaxValue}.\n");
+            }
         }
     }
 }

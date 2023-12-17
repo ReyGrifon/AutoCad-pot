@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCad-pot.Model", "AutoCa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCad-pot.ModelApi", "AutoCad-pot.ModelApi\AutoCad-pot.ModelApi.csproj", "{E371C77E-3E07-43E1-A67F-6AD1EBAF578D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCad-pot.UnitTests", "AutoCad-pot.UnitTests\AutoCad-pot.UnitTests.csproj", "{27A6FFE7-53D9-4474-B128-930C21EF5C37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoCad-pot.UnitTests", "AutoCad-pot.UnitTests\AutoCad-pot.UnitTests.csproj", "{27A6FFE7-53D9-4474-B128-930C21EF5C37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCad-pot.StressTesting", "AutoCad-pot.StressTesting\AutoCad-pot.StressTesting.csproj", "{B39B1522-F7E6-400C-B6DA-F3712795211C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{27A6FFE7-53D9-4474-B128-930C21EF5C37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27A6FFE7-53D9-4474-B128-930C21EF5C37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27A6FFE7-53D9-4474-B128-930C21EF5C37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B39B1522-F7E6-400C-B6DA-F3712795211C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B39B1522-F7E6-400C-B6DA-F3712795211C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B39B1522-F7E6-400C-B6DA-F3712795211C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B39B1522-F7E6-400C-B6DA-F3712795211C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

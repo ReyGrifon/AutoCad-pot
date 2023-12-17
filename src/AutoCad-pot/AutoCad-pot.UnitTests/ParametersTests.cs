@@ -1,5 +1,6 @@
 ﻿namespace AutoCad_pot.UnitTests
 {
+    using System;
     using AutoCad_pot.Model;
     using NUnit.Framework;
 
@@ -108,7 +109,7 @@
             string message)
         {
             var tmpParameters = Parameters;
-            Assert.IsTrue(tmpParameters.Validate(parameterType, value), message);
+            Assert.IsTrue(tmpParameters.SetValue(parameterType, Convert.ToDouble(value)), message);
         }
 
         [TestCase(ParameterType.PotHeight, "",

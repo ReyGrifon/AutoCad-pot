@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Общий класс параметров модели.
@@ -71,7 +72,12 @@
         /// <summary>
         /// Словарь с параметрам модели.
         /// </summary>
-        private readonly Dictionary<ParameterType, Parameter> _parameters;
+        private readonly Dictionary<ParameterType, Parameter> _parametersDictionary;
+
+        /// <summary>
+        /// Словарь ошибок.
+        /// </summary>
+        private readonly Dictionary<ParameterType, List<ArgumentException>> _errorDictionary;
 
         public bool HandleType { get; set; }
 
@@ -81,7 +87,7 @@
         public Parameters()
         {
             HandleType = true;
-            _parameters =
+            _parametersDictionary =
                new Dictionary<ParameterType, Parameter>
                {
                     {
@@ -121,7 +127,23 @@
                             MinHandlesHeight)
                     }
                };
+            _errorDictionary = new Dictionary<ParameterType, List<ArgumentException>>
+            {
+                { ParameterType.PotHeight, new List<ArgumentException>() },
+                { ParameterType.PotDiameter, new List<ArgumentException>() },
+                { ParameterType.BottomThickness, new List<ArgumentException>() },
+                { ParameterType.WallThickness, new List<ArgumentException>() },
+                { ParameterType.HandlesThickness, new List<ArgumentException>() },
+                { ParameterType.HandlesHeight, new List<ArgumentException>() }
+            };
         }
+
+        /// <summary>
+        /// Перегрузка оператора [].
+        /// </summary>
+        /// <param name="type">Тип параметра.</param>
+        /// <returns>Параметр.</returns>
+        public Parameter this[ParameterType type] => _parametersDictionary[type];
 
         /// <summary>
         /// Задать значение параметра.
@@ -130,11 +152,28 @@
         /// <param name="newValue">Новое значение для параметра. </param>
         public void SetValue(ParameterType parameterType, double newValue)
         {
-            _parameters[parameterType].Value = newValue;
-            if (parameterType == ParameterType.HandlesThickness)
+            _errorDictionary[parameterType].Clear();
+            try
             {
-                UpdateMaxHandlesHeight();
-                UpdateMinHandlesHeight();
+                _parametersDictionary[parameterType].Value = newValue;
+                if (parameterType == ParameterType.HandlesThickness)
+                {
+                    UpdateMaxHandlesHeight();
+                    UpdateMinHandlesHeight();
+                }
+            }
+            catch (ArgumentException exception)
+            {
+                _errorDictionary[parameterType].Add(exception);
+                if (parameterType == ParameterType.HandlesThickness)
+                {
+                    UpdateErrorHandlesHeight();
+                }
+            }
+
+            if (_errorDictionary[parameterType].Any())
+            {
+                throw new AggregateException(_errorDictionary[parameterType]);
             }
         }
 
@@ -145,7 +184,7 @@
         /// <returns>Значение параметра.</returns>
         public double GetValue(ParameterType parameterType)
         {
-            return _parameters[parameterType].Value;
+            return _parametersDictionary[parameterType].Value;
         }
 
         /// <summary>
@@ -155,7 +194,7 @@
         /// <returns>Минимально допустимое значение параметра.</returns>
         public double GetMinValue(ParameterType parameterType)
         {
-            return _parameters[parameterType].MinValue;
+            return _parametersDictionary[parameterType].MinValue;
         }
 
         /// <summary>
@@ -165,29 +204,7 @@
         /// <returns>Максимально допустимое значение параметра.</returns>
         public double GetMaxValue(ParameterType parameterType)
         {
-            return _parameters[parameterType].MaxValue;
-        }
-
-        /// <summary>
-        /// Валидация значения.
-        /// </summary>
-        /// <param name="parameterType">тип проверяемого параметра</param>
-        /// <param name="value">проверяемое значение</param>
-        /// <returns>true, если значение прошло проверку,
-        /// false в обратном случае</returns>
-        public bool Validate(ParameterType parameterType, string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return false;
-            }
-
-            if (!_parameters[parameterType].IsCorrect(Convert.ToDouble(value)))
-            {
-                return false;
-            }
-
-            return true;
+            return _parametersDictionary[parameterType].MaxValue;
         }
 
         /// <summary>
@@ -196,8 +213,19 @@
         /// </summary>
         public void UpdateMaxHandlesHeight()
         {
-            _parameters[ParameterType.HandlesHeight].MaxValue =
-                2 * _parameters[ParameterType.HandlesThickness].Value / 3;
+            _parametersDictionary[ParameterType.HandlesHeight].MaxValue =
+                2 * _parametersDictionary[ParameterType.HandlesThickness].Value / 3;
+        }
+
+        /// <summary>
+        /// Делает "Неправильные" границы для параметра
+        /// "Высота ручки"
+        /// "Высота ручки".
+        /// </summary>
+        public void UpdateErrorHandlesHeight()
+        {
+            _parametersDictionary[ParameterType.HandlesHeight].MaxValue = 0;
+            _parametersDictionary[ParameterType.HandlesHeight].MinValue = 0;
         }
 
         /// <summary>
@@ -206,8 +234,8 @@
         /// </summary>
         public void UpdateMinHandlesHeight()
         {
-            _parameters[ParameterType.HandlesHeight].MinValue =
-                _parameters[ParameterType.HandlesThickness].Value / 2;
+            _parametersDictionary[ParameterType.HandlesHeight].MinValue =
+                _parametersDictionary[ParameterType.HandlesThickness].Value / 2;
         }
     }
 }

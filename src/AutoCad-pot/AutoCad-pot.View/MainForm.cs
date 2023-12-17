@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Drawing;
     using System.Globalization;
+    using System.Linq;
     using System.Windows.Forms;
     using AutoCad_pot.Model;
     using TextBox = System.Windows.Forms.TextBox;
@@ -13,9 +14,10 @@
     /// </summary>
     public partial class MainForm : Form
     {
-        private List<string> _errorsList;
-
-        private string errors;
+        /// <summary>
+        /// Словарь ошибок.
+        /// </summary>
+        private Dictionary<ParameterType, string> _errors;
 
         /// <summary>
         /// Переменная для цвета поля при прохождении валидации.
@@ -24,7 +26,7 @@
 
         private static readonly Color ErrorColor = Color.LightPink;
 
-        private Dictionary<TextBox, ParameterType> _fields;
+        private Dictionary<ParameterType, TextBox> _fields;
 
         /// <summary>
         /// Конструктор формы.
@@ -44,8 +46,6 @@
         /// </summary>
         public Parameters Parameters { get; }
 
-        public string HandleType { get;  }
-
         private void UpdateLabel()
         {
             HandlesHeightLimitsLabel.Text = 
@@ -56,103 +56,135 @@
                     Math.Round(Parameters.GetMaxValue(ParameterType.HandlesHeight), 2)) + " mm";
         }
 
-        private void ErrorUpdateLabel()
-        {
-            HandlesHeightLimitsLabel.Text = "x - x mm";
-        }
-
         private void InitializeFields()
         {
-            _fields = new Dictionary<TextBox, ParameterType>
+            _fields = new Dictionary<ParameterType, TextBox>
             {
-                { PotHeightTextBox, ParameterType.PotHeight},
-                { PotDiameterTextBox, ParameterType.PotDiameter},
-                { BottomThicknessTextBox, ParameterType.BottomThickness },
-                { WallThicknessTextBox, ParameterType.WallThickness },
-                { HandlesThicknessTextBox, ParameterType.HandlesThickness },
-                { HandlesHeightTextBox, ParameterType.HandlesHeight }
+                { ParameterType.PotHeight,PotHeightTextBox},
+                { ParameterType.PotDiameter , PotDiameterTextBox},
+                { ParameterType.BottomThickness , BottomThicknessTextBox },
+                { ParameterType.WallThickness , WallThicknessTextBox },
+                { ParameterType.HandlesThickness , HandlesThicknessTextBox },
+                { ParameterType.HandlesHeight , HandlesHeightTextBox }
             };
         }
 
         private void InitializeErrors()
         {
-            _errorsList = new List<string>();
+            _errors = new Dictionary<ParameterType, string>
+            {
+                { ParameterType.PotHeight, "" },
+                { ParameterType.PotDiameter, "" },
+                { ParameterType.BottomThickness, "" },
+                { ParameterType.WallThickness, "" },
+                { ParameterType.HandlesThickness, "" },
+                { ParameterType.HandlesHeight, "" }
+            };
         }
 
         private void PotBuildButton_Click(object sender, EventArgs e)
         {
-            if (_errorsList.Count != 0)
+            if (!CheckOnErrors())
             {
-                errors = "";
-                foreach (var error in _errorsList)
-                {
-                    errors += error.ToString() + " is not in the specified range" + "\n";
-                }
+                return;
+            }
 
-                MessageBox.Show(
-                    errors,
-                    "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-            else
-            {
-                DialogResult = DialogResult.OK;
-                Close();
-            }
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void TextBox_TextChanged(object sender, EventArgs e)
         {
+            var currentControl =
+                _fields.First(x => x.Value == sender);
+            var currentParameter = currentControl.Key;
             if (sender is TextBox textBox)
             {
-                CheckValueValidate(textBox);
+                try
+                {
+                    if (_fields[currentParameter].Text == "")
+                    {
+                        _fields[currentParameter].BackColor = ErrorColor;
+                        _errors[currentParameter] +=
+                            currentParameter + " is empty";
+                        return;
+                    }
+
+                    Parameters.SetValue(currentParameter, Convert.ToDouble(textBox.Text));
+                    _errors[currentParameter] = "";
+                    _fields[currentParameter].BackColor = CorrectColor;
+                }
+                catch (AggregateException aggregateException)
+                {
+                    if (_errors[currentParameter] != "")
+                    {
+                        _errors[currentParameter] = "";
+                    }
+
+                    foreach (ArgumentException exception in aggregateException.InnerExceptions)
+                    {
+                        _errors[currentParameter] +=
+                            currentParameter + exception.Message;
+                    }
+
+                    _fields[currentParameter].BackColor = ErrorColor;
+                }
+
+                try
+                {
+                    _errors[ParameterType.HandlesHeight] = "";
+                    _fields[ParameterType.HandlesHeight].BackColor = CorrectColor;
+                    if (currentParameter == ParameterType.HandlesThickness && Parameters.HandleType)
+                    {
+                        UpdateLabel();
+                        Parameters.SetValue(ParameterType.HandlesHeight, Convert.ToDouble(HandlesHeightTextBox.Text));
+                    }
+                }
+                catch (AggregateException aggregateException)
+                {
+                    if (_errors[ParameterType.HandlesHeight] != "")
+                    {
+                        _errors[ParameterType.HandlesHeight] = "";
+                    }
+
+                    foreach (ArgumentException exception in aggregateException.InnerExceptions)
+                    {
+                        _errors[ParameterType.HandlesHeight] +=
+                            ParameterType.HandlesHeight + exception.Message;
+                    }
+
+                    _fields[ParameterType.HandlesHeight].BackColor = ErrorColor;
+                }
             }
         }
 
-        private void CheckValueValidate(TextBox textBox)
+        /// <summary>
+        /// Проверяет правильность введенных данных.
+        /// </summary>
+        /// <returns>true - ошибок нет, false - есть ошибки при введении данных.</returns>
+        private bool CheckOnErrors()
         {
-            if (Parameters.Validate(_fields[textBox], textBox.Text))
-            {
-                Parameters.SetValue(_fields[textBox], Convert.ToDouble(textBox.Text));
-                CheckError(textBox, false);
-                if (_fields[textBox] == ParameterType.HandlesThickness && Parameters.HandleType)
-                {
-                    CheckValueValidate(HandlesHeightTextBox);
-                    UpdateLabel();
-                }
-            }
-            else
-            {
-                CheckError(textBox, true);
-            }
-        }
+            string allErrors = "";
 
-        private void CheckError(TextBox textBox, bool deciption)
-        {
-            if (deciption)
+            foreach (var error in _errors)
             {
-                if (!_errorsList.Contains(Convert.ToString(_fields[textBox])))
+                if (error.Value != "")
                 {
-                    _errorsList.Add(Convert.ToString(_fields[textBox]));
-                }
-
-                textBox.BackColor = ErrorColor;
-                if (_fields[textBox] == ParameterType.HandlesThickness && Parameters.HandleType)
-                {
-                    CheckError(HandlesHeightTextBox, true);
-                    ErrorUpdateLabel();
+                    allErrors += error.Value;
                 }
             }
-            else
-            {
-                if (_errorsList.Contains(Convert.ToString(_fields[textBox])))
-                {
-                    _errorsList.Remove(Convert.ToString(_fields[textBox]));
-                }
 
-                textBox.BackColor = CorrectColor;
+            if (allErrors != "")
+            {
+                MessageBox.Show(
+                    allErrors,
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return false;
             }
+
+            return true;
         }
 
         private void TextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -196,7 +228,6 @@
             HandlesHeightLabel.Visible = true;
             HandlesHeightTextBox.Visible = true;
             HandlesHeightLimitsLabel.Visible = true;
-            CheckValueValidate(HandlesHeightTextBox);
             UpdateLabel();
         }
 

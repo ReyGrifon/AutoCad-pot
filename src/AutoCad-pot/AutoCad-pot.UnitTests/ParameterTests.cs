@@ -99,7 +99,8 @@ namespace AutoCad_pot.UnitTests
             string message)
         {
             var tmpParameter = Parameter;
-            Assert.IsFalse(tmpParameter.IsCorrect(value), message);
+            Assert.Catch(tmpParameter.Validate(value), message);
+            Assert.IsFalse(tmpParameter.Validate(value), message);
         }
 
         [TestCase(
@@ -108,7 +109,7 @@ namespace AutoCad_pot.UnitTests
         public void Test_EqualsParameter_CorrectValue(string message)
         {
             var tmpParameter = Parameter;
-            Assert.IsTrue(tmpParameter.IsCorrect(Value), message);
+            Assert.IsTrue(tmpParameter.Validate(Value), message);
         }
     }
 }
