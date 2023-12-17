@@ -42,42 +42,50 @@
         /// </summary>
         public void BuildPot()
         {
+            var basePoint = new Point3d(0, 0, 0);
+            var bottom = _parameters.GetValue(ParameterType.BottomThickness);
+            var substractBasePoint = new Point3d(0, 0, bottom);
+            var heightCylinder = _parameters.GetValue(ParameterType.PotHeight);
+            var radius = _parameters.GetValue(ParameterType.PotDiameter) / 2d;
             var yPoint = _parameters.GetValue(ParameterType.PotDiameter);
             using (var transaction =
                 _database.TransactionManager.StartTransaction())
             {
                 var blockTableRecord = GetBlockTableRecord(transaction);
                 var potBase = new Solid3d();
-                potBase = BuildBase();
+                potBase = BuildCylinder(basePoint, radius, heightCylinder);
                 if (_parameters.HandleType)
                 {
-                    var leftHandle = new Solid3d();
-                    leftHandle = BuildHandle(yPoint);
-                    potBase.BooleanOperation(
-                        BooleanOperationType.BoolUnite,
-                        leftHandle);
-
-                    yPoint *= -1;
-
-                    var rightHandle = new Solid3d();
-                    rightHandle = BuildHandle(yPoint);
-                    potBase.BooleanOperation(
-                        BooleanOperationType.BoolUnite,
-                        rightHandle);
+                    var potHandle = new Solid3d();
+                    potHandle = BuildHandles();
+                    potBase.BooleanOperation(BooleanOperationType.BoolUnite, potHandle);
                 }
                 else
                 {
-                    var SausepanHandle = new Solid3d();
-                    SausepanHandle = BuildSausepan();
-                    potBase.BooleanOperation(BooleanOperationType.BoolUnite, SausepanHandle);
+                    var sausepanHandle = new Solid3d();
+                    sausepanHandle = BuildSausepan();
+                    potBase.BooleanOperation(BooleanOperationType.BoolUnite, sausepanHandle);
                 }
 
-                potBase.BooleanOperation(BooleanOperationType.BoolSubtract, SubtractPot());
+                radius -= _parameters.GetValue(ParameterType.WallThickness);
+                heightCylinder -= _parameters.GetValue(ParameterType.BottomThickness);
+                var substractCylinder = BuildCylinder(substractBasePoint, radius, heightCylinder);
+                potBase.BooleanOperation(BooleanOperationType.BoolSubtract, substractCylinder);
                 blockTableRecord.AppendEntity(potBase);
                 transaction.AddNewlyCreatedDBObject(potBase, true);
 
                 transaction.Commit();
             }
+        }
+
+        private Solid3d BuildHandles()
+        {
+            var yPoint = _parameters.GetValue(ParameterType.PotDiameter) / 2d;
+            var leftHandle = BuildHandle(yPoint);
+            yPoint *= -1;
+            var rightHandle = BuildHandle(yPoint);
+            leftHandle.BooleanOperation(BooleanOperationType.BoolUnite, rightHandle);
+            return leftHandle;
         }
 
         private Solid3d BuildHandle(double value)
@@ -86,79 +94,30 @@
                 _database.TransactionManager.StartTransaction())
             {
                 var handleRadius = _parameters.GetValue(ParameterType.PotDiameter) / 5d;
-                var handleSolid = new Solid3d();
-                var substractSolid = new Solid3d();
-                var handle = new Circle(
-                    new Point3d(
-                    0,
-                    value / 2d,
-                    _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance),
-                    Vector3d.ZAxis,
-                    handleRadius);
-                handleSolid = ExtrudeCircle(handle);
+                var circleHeight =
+                    _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance;
+                var center = new Point3d(0, value, circleHeight);
+                var cylinderHeight = _parameters.GetValue(ParameterType.HandlesHeight);
 
-                var substractHandle = new Circle(
-                    new Point3d(
-                    0,
-                    value / 2d,
-                    _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance),
-                    Vector3d.ZAxis,
-                    handleRadius - _parameters.GetValue(ParameterType.HandlesThickness));
-                substractSolid = ExtrudeCircle(substractHandle);
+                var handleSolid = BuildCylinder(center, handleRadius, cylinderHeight);
+                handleRadius -= _parameters.GetValue(ParameterType.HandlesThickness);
+                var substractSolid = BuildCylinder(center, handleRadius, cylinderHeight);
+
                 handleSolid.BooleanOperation(BooleanOperationType.BoolSubtract, substractSolid);
                 return handleSolid;
             }
         }
 
-        private Solid3d ExtrudeCircle(Circle circle)
+        private Solid3d BuildCylinder(Point3d center, double radius, double height)
         {
             var extrudeSolid = new Solid3d();
+            var circle = new Circle(center, Vector3d.ZAxis, radius);
             var curves = new DBObjectCollection();
             curves.Add(circle);
             var regions = Region.CreateFromCurves(curves);
             var region = (Region)regions[0];
-            extrudeSolid.Extrude(region, _parameters.GetValue(ParameterType.HandlesHeight), 0);
+            extrudeSolid.Extrude(region, height, 0);
             return extrudeSolid;
-        }
-
-        private Solid3d BuildBase()
-        {
-            using (var transaction = _database.TransactionManager.StartTransaction())
-            {
-                var heightExtrudeCircle = _parameters.GetValue(ParameterType.PotHeight);
-                var extrudeSolid = new Solid3d();
-                var curves = new DBObjectCollection();
-                var regions = new DBObjectCollection();
-                var potCircle = new Circle(
-                    new Point3d(0, 0, 0),
-                    Vector3d.ZAxis,
-                    _parameters.GetValue(ParameterType.PotDiameter) / 2d);
-                curves.Add(potCircle);
-                regions = Region.CreateFromCurves(curves);
-                var region = (Region)regions[0];
-                extrudeSolid.Extrude(region, heightExtrudeCircle, 0);
-                return extrudeSolid;
-            }
-        }
-
-        private Solid3d SubtractPot()
-        {
-            var radiusSubstractCircle = (_parameters.GetValue(ParameterType.PotDiameter)
-                                        - _parameters.GetValue(ParameterType.WallThickness)) / 2d;
-            var heightSubstractCircle = -(_parameters.GetValue(ParameterType.PotHeight)
-                                          - _parameters.GetValue(ParameterType.BottomThickness));
-            var subtractSolid = new Solid3d();
-            var curves = new DBObjectCollection();
-            var regions = new DBObjectCollection();
-            var potCircle = new Circle(
-                    new Point3d(0, 0, _parameters.GetValue(ParameterType.PotHeight)),
-                    Vector3d.ZAxis,
-                    radiusSubstractCircle);
-            curves.Add(potCircle);
-            regions = Region.CreateFromCurves(curves);
-            var region = (Region)regions[0];
-            subtractSolid.Extrude(region, heightSubstractCircle, 0);
-            return subtractSolid;
         }
 
         private Solid3d BuildSausepan()
