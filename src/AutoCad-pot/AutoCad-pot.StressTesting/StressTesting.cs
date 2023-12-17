@@ -17,15 +17,21 @@
         public void StressBuildPot()
         {
             var parameters = new Parameters();
+            parameters.SetValue(ParameterType.PotHeight, 225);
+            parameters.SetValue(ParameterType.PotDiameter, 175);
+            parameters.SetValue(ParameterType.BottomThickness, 5.5);
+            parameters.SetValue(ParameterType.WallThickness, 1.75);
+            parameters.SetValue(ParameterType.HandlesThickness, 6.5);
+            parameters.SetValue(ParameterType.HandlesHeight, 3.79);
             var builder = new Builder(parameters);
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             var streamWriter = new StreamWriter($"log.txt", false);
             var currentProcess = Process.GetCurrentProcess();
+            const double gigabyteInByte = 0.000000000931322574615478515625;
             var count = 0;
-            while (count != 2000)
+            while (count != 1001)
             {
-                const double gigabyteInByte = 0.000000000931322574615478515625;
                 builder.BuildPot();
                 var computerInfo = new ComputerInfo();
                 var usedMemory = (computerInfo.TotalPhysicalMemory
