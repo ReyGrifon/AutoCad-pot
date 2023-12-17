@@ -1,5 +1,6 @@
 namespace AutoCad_pot.UnitTests
 {
+    using System;
     using AutoCad_pot.Model;
     using NUnit.Framework;
 
@@ -35,22 +36,6 @@ namespace AutoCad_pot.UnitTests
             Assert.AreEqual(expectedMin, actual, message);
         }
 
-        [TestCase(MaxValue, MaxValue,
-            "Сеттер некорректно записал данные.",
-            TestName = "Позитивный тест сеттера свойства MaxValue: "
-                       + "Задать максимальное значение объекта.")]
-        [TestCase(-10, MinValue,
-            "Сеттер записал значение меньше допустимого.",
-            TestName = "Позитивный тест сеттера свойства MaxValue: "
-                       + "Попытка присвоить значение меньше минимально допустимого.")]
-        public void Test_MaxValue_Set_WrongValue(double value, double expectedValue,
-            string message)
-        {
-            var tmpParameter = Parameter;
-            tmpParameter.MaxValue = value;
-            Assert.AreEqual(expectedValue, tmpParameter.MaxValue, message);
-        }
-
         [TestCase(100, "Геттер возвращает некорректное значение.",
             TestName = "Позитивный тест геттера свойства MaxValue.")]
         public void Test_MaxValue_Get_CorrectValue(double expectedValue, string message)
@@ -61,9 +46,6 @@ namespace AutoCad_pot.UnitTests
             Assert.AreEqual(expectedValue, actual, message);
         }
 
-        [TestCase(Value, Value, "Сеттер некорректно записал данные.",
-            TestName = "Позитивный тест сеттера свойства Value: "
-                       + "Задать новое значение.")]
         [TestCase(1000, Value, "Сеттер некорректно записал данные.",
             TestName =
                 "Позитивный тест сеттера свойства Value: "
@@ -75,9 +57,14 @@ namespace AutoCad_pot.UnitTests
         public void Test_Value_Set_CorrectValue(double value, double expectedValue,
             string message)
         {
-            var tmpParameter = Parameter;
-            tmpParameter.Value = value;
-            Assert.AreEqual(expectedValue, tmpParameter.Value, message);
+            var parameter = Parameter;
+            var excpectedMessage =
+                $" is not in the range {parameter.MinValue}-{parameter.MaxValue}.\n";
+
+            // Assert & Act
+            var exception = Assert.Throws<ArgumentException>(
+                () => parameter.Value = value);
+            Assert.AreEqual(excpectedMessage, exception.Message);
         }
 
         [TestCase(Value, "Геттер возвращает некорректное значение.",
@@ -99,8 +86,36 @@ namespace AutoCad_pot.UnitTests
             string message)
         {
             var tmpParameter = Parameter;
-            Assert.Catch(tmpParameter.Validate(value), message);
-            Assert.IsFalse(tmpParameter.Validate(value), message);
+            var excpectedMessage =
+                $" is not in the range {tmpParameter.MinValue}-{tmpParameter.MaxValue}.\n";
+
+            var exception = Assert.Throws<ArgumentException>(
+                () => tmpParameter.Value = value);
+            Assert.AreEqual(excpectedMessage, exception.Message);
+
+        }
+
+        [TestCase(
+            30,
+            "Ошибка при сравнении.",
+            TestName = "Негативный тест метода Equals.")]
+        public void Test_Parameter_EqualMinMax(
+            double value,
+            string message)
+        {
+            var tmpParameter = Parameter;
+            var excpectedMessage =
+                $": Main parameter entered incorrectly.\n";
+
+            var exception = Assert.Throws<ArgumentException>(
+                () =>
+                {
+                    tmpParameter.MinValue = 0;
+                    tmpParameter.MaxValue = 0;
+                    tmpParameter.Value = value;
+                });
+            Assert.AreEqual(excpectedMessage, exception.Message);
+
         }
 
         [TestCase(
@@ -108,8 +123,13 @@ namespace AutoCad_pot.UnitTests
             TestName = "Позитивный тест метода Equals.")]
         public void Test_EqualsParameter_CorrectValue(string message)
         {
+            var expected = 30;
             var tmpParameter = Parameter;
-            Assert.IsTrue(tmpParameter.Validate(Value), message);
+            tmpParameter.Value = expected;
+            var actual = tmpParameter.Value;
+
+            // Assert
+            Assert.AreEqual(expected, actual);
         }
     }
 }

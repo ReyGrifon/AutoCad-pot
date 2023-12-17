@@ -62,17 +62,6 @@
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
-        [TestCase(ParameterType.PotHeight, 2000,
-            "Метод задает некорректное значение параметра 'PotHeight'.")]
-        public void Test_SetValue_WrongValue(ParameterType parameterType,
-            double unexpectedValue, string message)
-        {
-            var tmpParameters = Parameters;
-            tmpParameters.SetValue(parameterType, unexpectedValue);
-            var actualValue = tmpParameters.GetValue(parameterType);
-            Assert.AreNotEqual(unexpectedValue, actualValue, message);
-        }
-
         [TestCase(3, 1.5, "Метод возвращает некорректное минимальное "
                         + "значение параметра HandlesHeight.",
             TestName =
@@ -101,30 +90,54 @@
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
-        [TestCase(ParameterType.PotHeight, "200",
-            "Значение не подходит в диапазон",
-            TestName = "Тест метода Validate: "
-                       + "валидация правильного значения'.")]
-        public void Test_Validate_CorrectValue(ParameterType parameterType, string value,
-            string message)
+        [Test(Description = "Тест авто свойства HandleType")]
+        public void HandleTypeProperty()
         {
-            var tmpParameters = Parameters;
-            Assert.IsTrue(tmpParameters.SetValue(parameterType, Convert.ToDouble(value)), message);
+            // Arrange
+            var parameters = Parameters;
+            var expected = false;
+
+            // Act
+            parameters.HandleType = expected;
+            var actual = parameters.HandleType;
+
+            // Assert
+            Assert.AreEqual(expected, actual);
         }
 
-        [TestCase(ParameterType.PotHeight, "",
-            "Значение подходит в диапазон",
-            TestName = "Тест метода Validate: "
-                       + "валидация пустого значения'.")]
-        [TestCase(ParameterType.PotHeight, "0",
-            "Значение подходит в диапазон",
-            TestName = "Тест метода Validate: "
-                       + "валидация нулевого значения'.")]
-        public void Test_Validate_WrongValue(ParameterType parameterType, string value,
-            string message)
+        [TestCase(ParameterType.PotHeight, 2000,
+            "Метод задает некорректное значение параметра 'PotHeight'.")]
+        public void SetValueFailureNeckHeightOne(ParameterType parameterType,
+            double unexpectedValue, string message)
         {
-            var tmpParameters = Parameters;
-            Assert.IsFalse(tmpParameters.Validate(parameterType, value), message);
+            // Arrange
+            var parameters = Parameters;
+            var parameter = parameters[parameterType];
+            var expected = 8;
+            var expectedMessage =
+                $" is not in the range {parameter.MinValue}-{parameter.MaxValue}.\n";
+
+            // Assert & Act
+            var exception = Assert.Throws<AggregateException>(
+                () => parameters.SetValue(parameterType, unexpectedValue));
+
+            Assert.AreEqual(expectedMessage, exception.InnerExceptions[0].Message);
+        }
+
+        [TestCase(ParameterType.HandlesThickness, 2000,
+            "Метод задает некорректное значение параметра 'PotHeight'.")]
+        public void SetValue(ParameterType parameterType,
+            double unexpectedValue, string message)
+        {
+            var parameters = Parameters;
+            var expected = 0;
+            var exception = Assert.Throws<AggregateException>(
+                () =>
+                {
+                    parameters.SetValue(parameterType, unexpectedValue);
+                    var actual = parameters[ParameterType.HandlesHeight].MaxValue;
+                    Assert.AreEqual(expected, actual);
+                });
         }
     }
 }
