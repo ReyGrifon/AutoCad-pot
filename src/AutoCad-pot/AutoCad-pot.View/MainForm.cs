@@ -24,9 +24,20 @@
         /// </summary>
         private static readonly Color CorrectColor = Color.White;
 
+        /// <summary>
+        /// Переменная для цвета поля при провале валидации.
+        /// </summary>
         private static readonly Color ErrorColor = Color.LightPink;
 
+        /// <summary>
+        /// Словарь текстбоксов с ключами параметрами.
+        /// </summary>
         private Dictionary<ParameterType, TextBox> _fields;
+
+        /// <summary>
+        /// Поле, хранящее тип параметра и соответствующее ему элемент Label.
+        /// </summary>
+        private Dictionary<ParameterType, Label> _labels;
 
         /// <summary>
         /// Конструктор формы.
@@ -38,7 +49,7 @@
             Parameters = new Parameters();
             InitializeFields();
             InitializeErrors();
-            UpdateLabel();
+            InitializeLabels();
         }
 
         /// <summary>
@@ -46,16 +57,23 @@
         /// </summary>
         public Parameters Parameters { get; }
 
-        private void UpdateLabel()
+        /// <summary>
+        /// Обновление label для параметра/
+        /// HandlesHeight
+        /// </summary>
+        private void UpdateLabel(ParameterType parameter)
         {
-            HandlesHeightLimitsLabel.Text = 
+            _labels[parameter].Text = 
                 Convert.ToString(
-                    Math.Round(Parameters.GetMinValue(ParameterType.HandlesHeight), 2))
+                    Math.Round(Parameters.GetMinValue(parameter), 2))
                 + " - " + 
                 Convert.ToString(
-                    Math.Round(Parameters.GetMaxValue(ParameterType.HandlesHeight), 2)) + " mm";
+                    Math.Round(Parameters.GetMaxValue(parameter), 2)) + " mm";
         }
 
+        /// <summary>
+        /// Инициализация словаря _fields.
+        /// </summary>
         private void InitializeFields()
         {
             _fields = new Dictionary<ParameterType, TextBox>
@@ -69,6 +87,25 @@
             };
         }
 
+        /// <summary>
+        /// Инициализация полей Label.
+        /// </summary>
+        private void InitializeLabels()
+        {
+            _labels = new Dictionary<ParameterType, Label>
+            {
+                {ParameterType.PotHeight, PotHeightLimitsLabel},
+                {ParameterType.PotDiameter, PotDiameterLimitsLabel},
+                {ParameterType.BottomThickness,  BottomThicknessLimitsLabel},
+                {ParameterType.WallThickness, WallThicknessLimitsLabel},
+                {ParameterType.HandlesThickness, HandlesThicknessLimitsLabel},
+                {ParameterType.HandlesHeight, HandlesHeightLimitsLabel}
+            };
+        }
+
+        /// <summary>
+        /// Инициализация словаря с ошибками.
+        /// </summary>
         private void InitializeErrors()
         {
             _errors = new Dictionary<ParameterType, string>
@@ -82,6 +119,11 @@
             };
         }
 
+        /// <summary>
+        /// Событие нажимания кнопки Build
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PotBuildButton_Click(object sender, EventArgs e)
         {
             if (!CheckOnErrors())
@@ -93,6 +135,11 @@
             Close();
         }
 
+        /// <summary>
+        /// Событие изменения поля textbox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TextBox_TextChanged(object sender, EventArgs e)
         {
             var currentControl =
@@ -102,24 +149,23 @@
             {
                 try
                 {
+                    _errors[currentParameter] = "";
                     if (_fields[currentParameter].Text == "")
                     {
                         _fields[currentParameter].BackColor = ErrorColor;
                         _errors[currentParameter] +=
-                            currentParameter + " is empty";
+                            currentParameter + " is empty\n";
                         return;
                     }
 
-                    Parameters.SetValue(currentParameter, Convert.ToDouble(textBox.Text));
+                    Parameters.SetValue(
+                        currentParameter,
+                        Convert.ToDouble(textBox.Text));
                     _errors[currentParameter] = "";
                     _fields[currentParameter].BackColor = CorrectColor;
                 }
                 catch (AggregateException aggregateException)
                 {
-                    if (_errors[currentParameter] != "")
-                    {
-                        _errors[currentParameter] = "";
-                    }
 
                     foreach (ArgumentException exception in aggregateException.InnerExceptions)
                     {
@@ -132,20 +178,20 @@
 
                 try
                 {
-                    _errors[ParameterType.HandlesHeight] = "";
-                    _fields[ParameterType.HandlesHeight].BackColor = CorrectColor;
-                    if (currentParameter == ParameterType.HandlesThickness && Parameters.HandleType)
+                    if (currentParameter == ParameterType.HandlesThickness &&
+                        Parameters.HandleType)
                     {
-                        UpdateLabel();
-                        Parameters.SetValue(ParameterType.HandlesHeight, Convert.ToDouble(HandlesHeightTextBox.Text));
+                        UpdateLabel(ParameterType.HandlesHeight);
+                        Parameters.SetValue(
+                            ParameterType.HandlesHeight, 
+                            Convert.ToDouble(HandlesHeightTextBox.Text));
+                        _fields[ParameterType.HandlesHeight].BackColor = CorrectColor;
+                        _errors[ParameterType.HandlesHeight] = "";
                     }
                 }
                 catch (AggregateException aggregateException)
                 {
-                    if (_errors[ParameterType.HandlesHeight] != "")
-                    {
-                        _errors[ParameterType.HandlesHeight] = "";
-                    }
+                    _errors[ParameterType.HandlesHeight] = "";
 
                     foreach (ArgumentException exception in aggregateException.InnerExceptions)
                     {
@@ -154,6 +200,32 @@
                     }
 
                     _fields[ParameterType.HandlesHeight].BackColor = ErrorColor;
+                }
+
+                try
+                {
+                    if (currentParameter == ParameterType.HandlesHeight &&
+                        Parameters.HandleType)
+                    {
+                        UpdateLabel(ParameterType.HandlesThickness);
+                        Parameters.SetValue(
+                            ParameterType.HandlesThickness,
+                            Convert.ToDouble(HandlesThicknessTextBox.Text));
+                        _fields[ParameterType.HandlesThickness].BackColor = CorrectColor;
+                        _errors[ParameterType.HandlesThickness] = "";
+                    }
+                }
+                catch (AggregateException aggregateException)
+                {
+                    _errors[ParameterType.HandlesThickness] = "";
+
+                    foreach (ArgumentException exception in aggregateException.InnerExceptions)
+                    {
+                        _errors[ParameterType.HandlesThickness] +=
+                            ParameterType.HandlesThickness + exception.Message;
+                    }
+
+                    _fields[ParameterType.HandlesThickness].BackColor = ErrorColor;
                 }
             }
         }
@@ -187,6 +259,11 @@
             return true;
         }
 
+        /// <summary>
+        /// Событие нажатия на кнопку.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (sender is TextBox textBox)
@@ -222,21 +299,38 @@
             }
         }
 
+        /// <summary>
+        /// установка HandlePotRadioButton.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HandlePotRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             Parameters.HandleType = true;
-            HandlesHeightLabel.Visible = true;
-            HandlesHeightTextBox.Visible = true;
-            HandlesHeightLimitsLabel.Visible = true;
-            UpdateLabel();
+            HandlesThicknessLabel.Visible = true;
+            HandlesThicknessTextBox.Visible = true;
+            HandlesThicknessLimitsLabel.Visible = true;
+            UpdateLabel(ParameterType.HandlesThickness);
+            Parameters.UpdateMaxHandlesHeight();
         }
 
+        /// <summary>
+        /// Установка SauсepanRadioButton.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SaucepanRadioButton_CheckedChanged(object sender, EventArgs e)
         {
+            HandlesThicknessTextBox.Text = Convert.ToString(
+                Parameters.GetMinValue(ParameterType.HandlesThickness));
             Parameters.HandleType = false;
-            HandlesHeightLabel.Visible = false;
-            HandlesHeightTextBox.Visible = false;
-            HandlesHeightLimitsLabel.Visible = false;
+            HandlesThicknessLabel.Visible = false;
+            HandlesThicknessTextBox.Visible = false;
+            HandlesThicknessLimitsLabel.Visible = false;
+            Parameters.UpdateHandlesHeightLimit();
+            UpdateLabel(ParameterType.HandlesHeight);
+            HandlesHeightTextBox.Text = Convert.ToString(
+                Parameters.GetValue(ParameterType.HandlesHeight));
         }
     }
 }

@@ -8,6 +8,9 @@
     public class Parameter
     {
 
+        /// <summary>
+        /// Значение параметра.
+        /// </summary>
         private double _value;
 
         /// <summary>

@@ -7,7 +7,7 @@
     /// <summary>
     /// Класс-обёртка для работы с Api.
     /// </summary>
-    public class Wrapper : IExtensionApplication
+    public class Connector : IExtensionApplication
     {
         /// <summary>
         /// Метод, вызывающий MainForm.

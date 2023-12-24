@@ -52,22 +52,22 @@
         /// <summary>
         /// Минимальная толщина ручек.
         /// </summary>
-        public const double MinHandlesThickness = 3;
+        public const double MinHandlesThickness = 2.5;
 
         /// <summary>
         /// Максимальная толщина ручек.
         /// </summary>
-        public const double MaxHandlesThickness = 10;
+        public const double MaxHandlesThickness = 5;
 
         /// <summary>
         /// Минимальная высота ручек.
         /// </summary>
-        public const double MinHandlesHeight = 1.5;
+        public const double MinHandlesHeight = 10;
 
         /// <summary>
         /// Максимальная высота ручек.
         /// </summary>
-        public const double MaxHandlesHeight = 2;
+        public const double MaxHandlesHeight = 12.5;
 
         /// <summary>
         /// Словарь с параметрам модели.
@@ -79,6 +79,9 @@
         /// </summary>
         private readonly Dictionary<ParameterType, List<ArgumentException>> _errorDictionary;
 
+        /// <summary>
+        /// флаг для определения вида ручки.
+        /// </summary>
         public bool HandleType { get; set; }
 
         /// <summary>
@@ -156,18 +159,24 @@
             try
             {
                 _parametersDictionary[parameterType].Value = newValue;
+                if (parameterType == ParameterType.HandlesHeight)
+                {
+                    UpdateMaxHandlesThickness();
+                    UpdateMinHandlesThickness();
+                }
+
                 if (parameterType == ParameterType.HandlesThickness)
                 {
                     UpdateMaxHandlesHeight();
-                    UpdateMinHandlesHeight();
                 }
             }
             catch (ArgumentException exception)
             {
                 _errorDictionary[parameterType].Add(exception);
-                if (parameterType == ParameterType.HandlesThickness)
+
+                if (parameterType == ParameterType.HandlesHeight && HandleType)
                 {
-                    UpdateErrorHandlesHeight();
+                    UpdateErrorLimits(ParameterType.HandlesThickness);
                 }
             }
 
@@ -208,34 +217,61 @@
         }
 
         /// <summary>
+        /// Делает "Неправильные" границы для параметра
+        /// "Высота ручки"
+        /// "Высота ручки".
+        /// </summary>
+        private void UpdateErrorLimits(ParameterType type)
+        {
+            _parametersDictionary[type].MaxValue = 0;
+            _parametersDictionary[type].MinValue = 0;
+        }
+
+        /// <summary>
+        /// Обновляет максимальный порог для параметра
+        /// "Толщина ручки".
+        /// </summary>
+        public void UpdateMaxHandlesThickness()
+        {
+            _parametersDictionary[ParameterType.HandlesThickness].MaxValue =
+                _parametersDictionary[ParameterType.HandlesHeight].Value / 2;
+        }
+
+        /// <summary>
+        /// Обновляет максимальный порог для параметра
+        /// "Толщина ручки".
+        /// </summary>
+        public void UpdateMinHandlesThickness()
+        {
+            _parametersDictionary[ParameterType.HandlesThickness].MinValue =
+                _parametersDictionary[ParameterType.HandlesHeight].Value / 4;
+        }
+
+        /// <summary>
+        /// Обновляет параметры для ручки сотейника.
+        /// </summary>
+        public void UpdateHandlesHeightLimit()
+        {
+            _parametersDictionary[ParameterType.HandlesHeight].MaxValue = 12.5;
+            _parametersDictionary[ParameterType.HandlesHeight].Value = 10;
+        }
+
+        /// <summary>
         /// Обновляет максимальный порог для параметра
         /// "Высота ручки".
         /// </summary>
         public void UpdateMaxHandlesHeight()
         {
-            _parametersDictionary[ParameterType.HandlesHeight].MaxValue =
-                2 * _parametersDictionary[ParameterType.HandlesThickness].Value / 3;
-        }
-
-        /// <summary>
-        /// Делает "Неправильные" границы для параметра
-        /// "Высота ручки"
-        /// "Высота ручки".
-        /// </summary>
-        public void UpdateErrorHandlesHeight()
-        {
-            _parametersDictionary[ParameterType.HandlesHeight].MaxValue = 0;
-            _parametersDictionary[ParameterType.HandlesHeight].MinValue = 0;
-        }
-
-        /// <summary>
-        /// Обновляет минимальный порог для параметра
-        /// "Высота ручки".
-        /// </summary>
-        public void UpdateMinHandlesHeight()
-        {
-            _parametersDictionary[ParameterType.HandlesHeight].MinValue =
-                _parametersDictionary[ParameterType.HandlesThickness].Value / 2;
+            var maxLimit = _parametersDictionary[ParameterType.HandlesThickness].Value * 5;
+            if (maxLimit <= 20)
+            {
+                _parametersDictionary[ParameterType.HandlesHeight].MaxValue =
+                    maxLimit;
+            }
+            else
+            {
+                _parametersDictionary[ParameterType.HandlesHeight].MaxValue = 20;
+            }
         }
     }
 }

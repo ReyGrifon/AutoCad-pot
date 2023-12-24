@@ -1,6 +1,7 @@
 ﻿namespace AutoCad_pot.UnitTests
 {
     using System;
+    using System.Security.Cryptography;
     using AutoCad_pot.Model;
     using NUnit.Framework;
 
@@ -10,7 +11,9 @@
     [TestFixture(Description = "Модульные тесты класса Parameter.")]
     public class ParametersTests
     {
-
+        /// <summary>
+        /// Создание объекта параметры с минимальными параметрами.
+        /// </summary>
         private Parameters Parameters => new Parameters();
 
         [TestCase(ParameterType.PotHeight, Parameters.MinPotHeight,
@@ -36,7 +39,7 @@
             var actualValue = tmpParameters.GetMaxValue(parameterType);
             Assert.AreEqual(expectedValue, actualValue, message);
         }
-        [TestCase(3,2, "Метод возвращает некорректное максимальное "
+        [TestCase(3,15, "Метод возвращает некорректное максимальное "
                        + "значение параметра HandlesHeight.",
             TestName =
             "Тест метода UpdateMaxHandlesHeight: Получить обновлённое значение"
@@ -51,6 +54,7 @@
             var actualValue = tmpParameters.GetMaxValue(ParameterType.HandlesHeight);
             Assert.AreEqual(exceptedValue, actualValue, message);
         }
+
         [TestCase(ParameterType.PotHeight, 170,
             "Метод задает некорректное значение параметра 'PotHeight'.")]
         public void Test_SetValue_CorrectValue(ParameterType parameterType,
@@ -62,19 +66,48 @@
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
-        [TestCase(3, 1.5, "Метод возвращает некорректное минимальное "
-                        + "значение параметра HandlesHeight.",
-            TestName =
-                "Тест метода UpdateMinHandlesHeight: Получить обновлённое значение"
-                + " параметра 'HandlesHeight'.")]
-        public void Test_UpdateMinHandlesHeight_CorrectValue(
-            double value,
+        [TestCase(ParameterType.HandlesHeight,
+            10,
+            2.5,
+            "Метод задает некорректное значение параметра 'PotHeight'.")]
+        public void Test_SetValue_ParameterType_HandlesHeightMin(
+            ParameterType parameterType,
+            double HandlessHeightValue,
             double exceptedValue,
             string message)
         {
             var tmpParameters = Parameters;
-            tmpParameters.SetValue(ParameterType.HandlesThickness, value);
-            var actualValue = tmpParameters.GetMinValue(ParameterType.HandlesHeight);
+            tmpParameters.SetValue(parameterType, HandlessHeightValue);
+            var actualValue = tmpParameters.GetMinValue(ParameterType.HandlesThickness);
+            Assert.AreEqual(exceptedValue, actualValue, message);
+        }
+
+        [TestCase(ParameterType.HandlesHeight,
+            100,
+            0,
+            "Метод высчитывает некорректное значение параметра 'HandlesHeight'.")]
+        public void Test_SetValue_ParameterType_UpdateErrorLimits(
+            ParameterType parameterType,
+            double HandlessHeightValue,
+            double exceptedValue,
+            string message)
+        {
+            var tmpParameters = Parameters;
+            var exception = Assert.Throws<AggregateException>(
+                () =>
+                {
+                    tmpParameters.SetValue(parameterType, HandlessHeightValue);
+                    var actualValue = tmpParameters.GetMaxValue(ParameterType.HandlesThickness);
+                    Assert.AreEqual(exceptedValue, actualValue, message);
+                });
+        }
+
+        [TestCase(12.5, "Ме")]
+        public void Test_UpdateHandlessHeightLimit(double exceptedValue, string message)
+        {
+            var tmpParameters = Parameters;
+            tmpParameters.UpdateHandlesHeightLimit();
+            var actualValue = tmpParameters.GetMaxValue(ParameterType.HandlesHeight);
             Assert.AreEqual(exceptedValue, actualValue, message);
         }
 

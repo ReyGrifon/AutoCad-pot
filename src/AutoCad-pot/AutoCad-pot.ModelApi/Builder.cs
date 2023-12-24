@@ -11,10 +11,14 @@
     /// </summary>
     public class Builder
     {
+        /// <summary>
+        /// объект класса с параметрами.
+        /// </summary>
         private readonly Parameters _parameters;
 
-        private readonly string _handleType;
-
+        /// <summary>
+        /// Значение расстояния ручки от верха.
+        /// </summary>
         private readonly double _handlesTopDistance = 40;
 
         /// <summary>
@@ -78,6 +82,10 @@
             }
         }
 
+        /// <summary>
+        /// Строит две ручки.
+        /// </summary>
+        /// <returns></returns>
         private Solid3d BuildHandles()
         {
             var yPoint = _parameters.GetValue(ParameterType.PotDiameter) / 2d;
@@ -88,6 +96,11 @@
             return leftHandle;
         }
 
+        /// <summary>
+        /// Строит ручку кастрюли.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private Solid3d BuildHandle(double value)
         {
             using (var transaction =
@@ -108,6 +121,13 @@
             }
         }
 
+        /// <summary>
+        /// Строит базовый цилиндр.
+        /// </summary>
+        /// <param name="center">центр цилиндра.</param>
+        /// <param name="radius">радиус цилиндра.</param>
+        /// <param name="height">высота цилиндра.</param>
+        /// <returns></returns>
         private Solid3d BuildCylinder(Point3d center, double radius, double height)
         {
             var extrudeSolid = new Solid3d();
@@ -120,18 +140,36 @@
             return extrudeSolid;
         }
 
+        /// <summary>
+        /// Строит ручку сотейника.
+        /// </summary>
+        /// <returns></returns>
         private Solid3d BuildSausepan()
         {
             Point3d[] polypts = new Point3d[4];
             double[] DblBulges = new double[4];
+            var zSide =
+                _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance;
             using (var transaction =
                 _database.TransactionManager.StartTransaction())
             {
                 DoubleCollection d = new DoubleCollection(DblBulges);
-                polypts[0] = new Point3d(10, 0, _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance);
-                polypts[1] = new Point3d(-10, 0, _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance);
-                polypts[2] = new Point3d(-10, 200, _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance);
-                polypts[3] = new Point3d(10, 200, _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance);
+                polypts[0] = new Point3d(
+                    10,
+                    0,
+                    zSide);
+                polypts[1] = new Point3d(
+                    -10,
+                    0,
+                    zSide);
+                polypts[2] = new Point3d(
+                    -10,
+                    200,
+                    zSide);
+                polypts[3] = new Point3d(
+                    10,
+                    200,
+                    zSide);
                 var pointCol = new Point3dCollection(polypts);
                 var tmpSol = new Solid3d();
 
@@ -143,7 +181,10 @@
                 Regions = Region.CreateFromCurves(Curves);
                 var Reg1 = (Region)Regions[0];
 
-                tmpSol.Extrude(Reg1, _parameters.GetValue(ParameterType.HandlesThickness), 0);
+                tmpSol.Extrude(
+                    Reg1,
+                    _parameters.GetValue(ParameterType.HandlesHeight),
+                    0);
                 return tmpSol;
             }
         }
@@ -153,10 +194,9 @@
         /// </summary>
         private void InitialSetting()
         {
-                _document = CadApplication.DocumentManager.MdiActiveDocument;
-                _database = _document.Database;
-
-                _database.Insunits = UnitsValue.Millimeters;
+            _document = CadApplication.DocumentManager.MdiActiveDocument;
+            _database = _document.Database;
+            _database.Insunits = UnitsValue.Millimeters;
         }
 
         /// <summary>

@@ -16,23 +16,13 @@ namespace AutoCad_pot.UnitTests
 
         private Parameter Parameter => new Parameter(MinValue, MaxValue, Value);
 
-        [TestCase(
-            MinValue,
-            "Сеттер некорректно записал данные.",
-            TestName = "Позитивный тест сеттера свойства MinValue: "
-                       + "Задать значение при создании объекта.")]
-        public void Test_MinValue_Set_CorrectValue(double expectedValue, string message)
-        {
-            var parameter = new Parameter(expectedValue, MaxValue, Value);
-            Assert.AreEqual(expectedValue, parameter.MinValue, message);
-        }
-
-        [TestCase(MinValue, "Геттер некорректно возвращает значение.",
+        [TestCase(20, "Геттер некорректно возвращает значение.",
             TestName = "Позитивный тест геттера свойства MinValue.")]
         public void Test_MinValue_Get_CorrectValue(double expectedMin, string message)
         {
-            var parameter = new Parameter(expectedMin, MaxValue, Value);
-            var actual = parameter.MinValue;
+            var tmpParameter = Parameter;
+            tmpParameter.MinValue = expectedMin;
+            var actual = tmpParameter.MinValue;
             Assert.AreEqual(expectedMin, actual, message);
         }
 
@@ -46,25 +36,25 @@ namespace AutoCad_pot.UnitTests
             Assert.AreEqual(expectedValue, actual, message);
         }
 
-        [TestCase(1000, Value, "Сеттер некорректно записал данные.",
+        [TestCase(1000,  "Сеттер некорректно записал данные.",
             TestName =
                 "Позитивный тест сеттера свойства Value: "
                 + "Задать значение, превышающее максимально допустимое.")]
-        [TestCase(-10, Value, "Сеттер некорректно записал данные.",
+        [TestCase(-10,  "Сеттер некорректно записал данные.",
             TestName =
                 "Позитивный тест сеттера свойства Value: "
                 + "Задать значение, меньше минимально допустимое.")]
-        public void Test_Value_Set_CorrectValue(double value, double expectedValue,
+        public void Test_Value_Set_CorrectValue(double value,
             string message)
         {
             var parameter = Parameter;
-            var excpectedMessage =
+            var expectedMessage =
                 $" is not in the range {parameter.MinValue}-{parameter.MaxValue}.\n";
 
             // Assert & Act
             var exception = Assert.Throws<ArgumentException>(
                 () => parameter.Value = value);
-            Assert.AreEqual(excpectedMessage, exception.Message);
+            Assert.AreEqual(expectedMessage, exception.Message);
         }
 
         [TestCase(Value, "Геттер возвращает некорректное значение.",
@@ -86,19 +76,19 @@ namespace AutoCad_pot.UnitTests
             string message)
         {
             var tmpParameter = Parameter;
-            var excpectedMessage =
+            var expectedMessage =
                 $" is not in the range {tmpParameter.MinValue}-{tmpParameter.MaxValue}.\n";
 
             var exception = Assert.Throws<ArgumentException>(
                 () => tmpParameter.Value = value);
-            Assert.AreEqual(excpectedMessage, exception.Message);
+            Assert.AreEqual(expectedMessage, exception.Message);
 
         }
 
         [TestCase(
             30,
             "Ошибка при сравнении.",
-            TestName = "Негативный тест метода Equals.")]
+            TestName = "Негативный тест метода Validate.")]
         public void Test_Parameter_EqualMinMax(
             double value,
             string message)
