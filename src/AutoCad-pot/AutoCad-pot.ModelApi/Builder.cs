@@ -47,11 +47,10 @@
         public void BuildPot()
         {
             var basePoint = new Point3d(0, 0, 0);
-            var bottom = _parameters.GetValue(ParameterType.BottomThickness);
+            var bottom = _parameters[ParameterType.BottomThickness].Value;
             var substractBasePoint = new Point3d(0, 0, bottom);
-            var heightCylinder = _parameters.GetValue(ParameterType.PotHeight);
-            var radius = _parameters.GetValue(ParameterType.PotDiameter) / 2d;
-            var yPoint = _parameters.GetValue(ParameterType.PotDiameter);
+            var heightCylinder = _parameters[ParameterType.PotHeight].Value;
+            var radius = _parameters[ParameterType.PotDiameter].Value / 2d;
             using (var transaction =
                 _database.TransactionManager.StartTransaction())
             {
@@ -71,8 +70,8 @@
                     potBase.BooleanOperation(BooleanOperationType.BoolUnite, sausepanHandle);
                 }
 
-                radius -= _parameters.GetValue(ParameterType.WallThickness);
-                heightCylinder -= _parameters.GetValue(ParameterType.BottomThickness);
+                radius -= _parameters[ParameterType.WallThickness].Value;
+                heightCylinder -= _parameters[ParameterType.BottomThickness].Value;
                 var substractCylinder = BuildCylinder(substractBasePoint, radius, heightCylinder);
                 potBase.BooleanOperation(BooleanOperationType.BoolSubtract, substractCylinder);
                 blockTableRecord.AppendEntity(potBase);
@@ -85,10 +84,10 @@
         /// <summary>
         /// Строит две ручки.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Ручки.</returns>
         private Solid3d BuildHandles()
         {
-            var yPoint = _parameters.GetValue(ParameterType.PotDiameter) / 2d;
+            var yPoint = _parameters[ParameterType.PotDiameter].Value / 2d;
             var leftHandle = BuildHandle(yPoint);
             yPoint *= -1;
             var rightHandle = BuildHandle(yPoint);
@@ -99,26 +98,22 @@
         /// <summary>
         /// Строит ручку кастрюли.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">y-координата ручки.</param>
+        /// <returns>один экземпляр ручки.</returns>
         private Solid3d BuildHandle(double value)
         {
-            using (var transaction =
-                _database.TransactionManager.StartTransaction())
-            {
-                var handleRadius = _parameters.GetValue(ParameterType.PotDiameter) / 5d;
+                var handleRadius = _parameters[ParameterType.PotDiameter].Value / 5d;
                 var circleHeight =
-                    _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance;
+                    _parameters[ParameterType.PotHeight].Value - _handlesTopDistance;
                 var center = new Point3d(0, value, circleHeight);
-                var cylinderHeight = _parameters.GetValue(ParameterType.HandlesHeight);
+                var cylinderHeight = _parameters[ParameterType.HandlesHeight].Value;
 
                 var handleSolid = BuildCylinder(center, handleRadius, cylinderHeight);
-                handleRadius -= _parameters.GetValue(ParameterType.HandlesThickness);
+                handleRadius -= _parameters[ParameterType.HandlesThickness].Value;
                 var substractSolid = BuildCylinder(center, handleRadius, cylinderHeight);
 
                 handleSolid.BooleanOperation(BooleanOperationType.BoolSubtract, substractSolid);
                 return handleSolid;
-            }
         }
 
         /// <summary>
@@ -127,7 +122,7 @@
         /// <param name="center">центр цилиндра.</param>
         /// <param name="radius">радиус цилиндра.</param>
         /// <param name="height">высота цилиндра.</param>
-        /// <returns></returns>
+        /// <returns>Модель цилиндра.</returns>
         private Solid3d BuildCylinder(Point3d center, double radius, double height)
         {
             var extrudeSolid = new Solid3d();
@@ -143,50 +138,46 @@
         /// <summary>
         /// Строит ручку сотейника.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>ручка сотейника.</returns>
         private Solid3d BuildSausepan()
         {
             Point3d[] polypts = new Point3d[4];
-            double[] DblBulges = new double[4];
+            double[] dblBulges = new double[4];
             var zSide =
-                _parameters.GetValue(ParameterType.PotHeight) - _handlesTopDistance;
-            using (var transaction =
-                _database.TransactionManager.StartTransaction())
-            {
-                DoubleCollection d = new DoubleCollection(DblBulges);
-                polypts[0] = new Point3d(
+                _parameters[ParameterType.PotHeight].Value - _handlesTopDistance;
+            DoubleCollection d = new DoubleCollection(dblBulges);
+            polypts[0] = new Point3d(
                     10,
                     0,
                     zSide);
-                polypts[1] = new Point3d(
+            polypts[1] = new Point3d(
                     -10,
                     0,
                     zSide);
-                polypts[2] = new Point3d(
+            polypts[2] = new Point3d(
                     -10,
                     200,
                     zSide);
-                polypts[3] = new Point3d(
+            polypts[3] = new Point3d(
                     10,
                     200,
                     zSide);
-                var pointCol = new Point3dCollection(polypts);
-                var tmpSol = new Solid3d();
+            var pointCol = new Point3dCollection(polypts);
+            var tmpSol = new Solid3d();
 
-                var outline = new Polyline3d(Poly3dType.SimplePoly, pointCol, true);
-                var Curves = new DBObjectCollection();
-                var Regions = new DBObjectCollection();
+            var outline = new Polyline3d(Poly3dType.SimplePoly, pointCol, true);
+            var curves = new DBObjectCollection();
+            var regions = new DBObjectCollection();
 
-                Curves.Add(outline);
-                Regions = Region.CreateFromCurves(Curves);
-                var Reg1 = (Region)Regions[0];
+            curves.Add(outline);
+            regions = Region.CreateFromCurves(curves);
+            var reg1 = (Region)regions[0];
 
-                tmpSol.Extrude(
-                    Reg1,
-                    _parameters.GetValue(ParameterType.HandlesHeight),
+            tmpSol.Extrude(
+                    reg1,
+                    _parameters[ParameterType.HandlesHeight].Value,
                     0);
-                return tmpSol;
-            }
+            return tmpSol;
         }
 
         /// <summary>

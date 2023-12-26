@@ -187,36 +187,6 @@
         }
 
         /// <summary>
-        /// Получить значение параметра.
-        /// </summary>
-        /// <param name="parameterType">Тип параметра.</param>
-        /// <returns>Значение параметра.</returns>
-        public double GetValue(ParameterType parameterType)
-        {
-            return _parametersDictionary[parameterType].Value;
-        }
-
-        /// <summary>
-        /// Получить минимально допустимое значение параметра.
-        /// </summary>
-        /// <param name="parameterType">Тип параметра.</param>
-        /// <returns>Минимально допустимое значение параметра.</returns>
-        public double GetMinValue(ParameterType parameterType)
-        {
-            return _parametersDictionary[parameterType].MinValue;
-        }
-
-        /// <summary>
-        /// Получить максимально допустимое значение параметра.
-        /// </summary>
-        /// <param name="parameterType">Тип параметра.</param>
-        /// <returns>Максимально допустимое значение параметра.</returns>
-        public double GetMaxValue(ParameterType parameterType)
-        {
-            return _parametersDictionary[parameterType].MaxValue;
-        }
-
-        /// <summary>
         /// Делает "Неправильные" границы для параметра
         /// "Высота ручки"
         /// "Высота ручки".

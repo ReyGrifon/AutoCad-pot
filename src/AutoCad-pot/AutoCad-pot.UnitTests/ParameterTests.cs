@@ -44,14 +44,12 @@ namespace AutoCad_pot.UnitTests
             TestName =
                 "Позитивный тест сеттера свойства Value: "
                 + "Задать значение, меньше минимально допустимое.")]
-        public void Test_Value_Set_CorrectValue(double value,
+        public void Test_Value_Set_WrongValue(double value,
             string message)
         {
             var parameter = Parameter;
             var expectedMessage =
                 $" is not in the range {parameter.MinValue}-{parameter.MaxValue}.\n";
-
-            // Assert & Act
             var exception = Assert.Throws<ArgumentException>(
                 () => parameter.Value = value);
             Assert.AreEqual(expectedMessage, exception.Message);
@@ -70,8 +68,8 @@ namespace AutoCad_pot.UnitTests
         [TestCase(
             9999,
             "Ошибка при сравнении.",
-            TestName = "Негативный тест метода Equals.")]
-        public void Test_EqualsParameter_WrongValue(
+            TestName = "Негативный тест метода Validate.")]
+        public void Test_ValidateParameter_WrongValue(
             double value,
             string message)
         {
@@ -110,16 +108,14 @@ namespace AutoCad_pot.UnitTests
 
         [TestCase(
             "Произошла ошибка при сравнении объектов.",
-            TestName = "Позитивный тест метода Equals.")]
-        public void Test_EqualsParameter_CorrectValue(string message)
+            TestName = "Позитивный тест метода Validate.")]
+        public void Test_ValidateParameter_CorrectValue(string message)
         {
             var expected = 30;
             var tmpParameter = Parameter;
             tmpParameter.Value = expected;
             var actual = tmpParameter.Value;
-
-            // Assert
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expected, actual, message);
         }
     }
 }

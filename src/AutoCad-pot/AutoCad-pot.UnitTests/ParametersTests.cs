@@ -1,14 +1,13 @@
 ﻿namespace AutoCad_pot.UnitTests
 {
     using System;
-    using System.Security.Cryptography;
     using AutoCad_pot.Model;
     using NUnit.Framework;
 
     /// <summary>
     /// Тестирование класса Parameters
     /// </summary>
-    [TestFixture(Description = "Модульные тесты класса Parameter.")]
+    [TestFixture(Description = "Модульные тесты класса Parameters.")]
     public class ParametersTests
     {
         /// <summary>
@@ -24,7 +23,7 @@
             double expectedValue, string message)
         {
             var tmpParameters = Parameters;
-            var actualValue = tmpParameters.GetMinValue(parameterType);
+            var actualValue = tmpParameters[parameterType].MinValue;
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
@@ -36,7 +35,7 @@
             double expectedValue, string message)
         {
             var tmpParameters = Parameters;
-            var actualValue = tmpParameters.GetMaxValue(parameterType);
+            var actualValue = tmpParameters[parameterType].MaxValue;
             Assert.AreEqual(expectedValue, actualValue, message);
         }
         [TestCase(3,15, "Метод возвращает некорректное максимальное "
@@ -44,6 +43,11 @@
             TestName =
             "Тест метода UpdateMaxHandlesHeight: Получить обновлённое значение"
             + " параметра 'HandlesHeight'.")]
+        [TestCase(5, 20, "Метод возвращает некорректное максимальное "
+                         + "значение параметра HandlesHeight.",
+            TestName =
+                "Тест метода UpdateMaxHandlesHeight: Получить обновлённое значение"
+                + " параметра 'HandlesHeight'.")]
         public void Test_UpdateMaxHandlesHeight_CorrectValue(
             double value,
             double exceptedValue,
@@ -51,7 +55,7 @@
         {
             var tmpParameters = Parameters;
             tmpParameters.SetValue(ParameterType.HandlesThickness, value);
-            var actualValue = tmpParameters.GetMaxValue(ParameterType.HandlesHeight);
+            var actualValue = tmpParameters[ParameterType.HandlesHeight].MaxValue;
             Assert.AreEqual(exceptedValue, actualValue, message);
         }
 
@@ -62,7 +66,7 @@
         {
             var tmpParameters = Parameters;
             tmpParameters.SetValue(parameterType, expectedValue);
-            var actualValue = tmpParameters.GetValue(parameterType);
+            var actualValue = tmpParameters[parameterType].Value;
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
@@ -78,7 +82,7 @@
         {
             var tmpParameters = Parameters;
             tmpParameters.SetValue(parameterType, HandlessHeightValue);
-            var actualValue = tmpParameters.GetMinValue(ParameterType.HandlesThickness);
+            var actualValue = tmpParameters[ParameterType.HandlesThickness].MinValue;
             Assert.AreEqual(exceptedValue, actualValue, message);
         }
 
@@ -97,7 +101,7 @@
                 () =>
                 {
                     tmpParameters.SetValue(parameterType, HandlessHeightValue);
-                    var actualValue = tmpParameters.GetMaxValue(ParameterType.HandlesThickness);
+                    var actualValue = tmpParameters[ParameterType.HandlesThickness].MaxValue;
                     Assert.AreEqual(exceptedValue, actualValue, message);
                 });
         }
@@ -107,7 +111,7 @@
         {
             var tmpParameters = Parameters;
             tmpParameters.UpdateHandlesHeightLimit();
-            var actualValue = tmpParameters.GetMaxValue(ParameterType.HandlesHeight);
+            var actualValue = tmpParameters[ParameterType.HandlesHeight].MaxValue;
             Assert.AreEqual(exceptedValue, actualValue, message);
         }
 
@@ -119,7 +123,7 @@
             double expectedValue, string message)
         {
             var tmpParameters = Parameters;
-            var actualValue = tmpParameters.GetValue(parameterType);
+            var actualValue = tmpParameters[parameterType].Value;
             Assert.AreEqual(expectedValue, actualValue, message);
         }
 
@@ -140,13 +144,12 @@
 
         [TestCase(ParameterType.PotHeight, 2000,
             "Метод задает некорректное значение параметра 'PotHeight'.")]
-        public void SetValueFailureNeckHeightOne(ParameterType parameterType,
+        public void SetValueFailurePotHeight(ParameterType parameterType,
             double unexpectedValue, string message)
         {
             // Arrange
             var parameters = Parameters;
             var parameter = parameters[parameterType];
-            var expected = 8;
             var expectedMessage =
                 $" is not in the range {parameter.MinValue}-{parameter.MaxValue}.\n";
 
@@ -158,7 +161,7 @@
         }
 
         [TestCase(ParameterType.HandlesThickness, 2000,
-            "Метод задает некорректное значение параметра 'PotHeight'.")]
+            "Метод задает некорректное значение параметра 'HandlesThickness'.")]
         public void SetValue(ParameterType parameterType,
             double unexpectedValue, string message)
         {

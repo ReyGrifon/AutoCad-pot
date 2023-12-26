@@ -61,14 +61,14 @@
         /// Обновление label для параметра/
         /// HandlesHeight
         /// </summary>
-        private void UpdateLabel(ParameterType parameter)
+        private void UpdateLabel(ParameterType type)
         {
-            _labels[parameter].Text = 
+            _labels[type].Text =
                 Convert.ToString(
-                    Math.Round(Parameters.GetMinValue(parameter), 2))
-                + " - " + 
+                    Math.Round(Parameters[type].MinValue, 2))
+                + " - " +
                 Convert.ToString(
-                    Math.Round(Parameters.GetMaxValue(parameter), 2)) + " mm";
+                    Math.Round(Parameters[type].MaxValue, 2)) + " mm";
         }
 
         /// <summary>
@@ -322,7 +322,7 @@
         private void SaucepanRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             HandlesThicknessTextBox.Text = Convert.ToString(
-                Parameters.GetMinValue(ParameterType.HandlesThickness));
+                Parameters[ParameterType.HandlesThickness].MinValue);
             Parameters.HandleType = false;
             HandlesThicknessLabel.Visible = false;
             HandlesThicknessTextBox.Visible = false;
@@ -330,7 +330,7 @@
             Parameters.UpdateHandlesHeightLimit();
             UpdateLabel(ParameterType.HandlesHeight);
             HandlesHeightTextBox.Text = Convert.ToString(
-                Parameters.GetValue(ParameterType.HandlesHeight));
+                Parameters[ParameterType.HandlesHeight].Value);
         }
     }
 }
