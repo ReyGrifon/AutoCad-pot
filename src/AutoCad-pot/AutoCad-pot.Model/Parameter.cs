@@ -55,7 +55,7 @@
         /// <param name="value">проверяемое значение. </param>
         /// <returns>false, если число не находится в пределах,
         /// true в обратной ситуации. </returns>
-        public void Validate(double value)
+        private void Validate(double value)
         {
             if (MinValue == MaxValue)
             {
