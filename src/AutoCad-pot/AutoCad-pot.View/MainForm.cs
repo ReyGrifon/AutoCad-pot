@@ -176,6 +176,7 @@
                     _fields[currentParameter].BackColor = ErrorColor;
                 }
 
+                //TODO: duplication
                 try
                 {
                     if (currentParameter == ParameterType.HandlesThickness &&
@@ -202,6 +203,7 @@
                     _fields[ParameterType.HandlesHeight].BackColor = ErrorColor;
                 }
 
+                //TODO: duplication
                 try
                 {
                     if (currentParameter == ParameterType.HandlesHeight &&
