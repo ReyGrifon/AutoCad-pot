@@ -17,6 +17,11 @@
         public void StressBuildPot()
         {
             var parameters = new Parameters();
+            parameters.SetValue(ParameterType.PotHeight, 225);
+            parameters.SetValue(ParameterType.PotDiameter, 175);
+            parameters.SetValue(ParameterType.BottomThickness, 5.5);
+            parameters.SetValue(ParameterType.WallThickness, 1.75);
+            parameters.SetValue(ParameterType.HandlesHeight, 11.25);
             parameters.HandleType = false;
             var builder = new Builder(parameters);
             var stopWatch = new Stopwatch();
