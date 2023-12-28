@@ -30,7 +30,7 @@
         [TestCase(ParameterType.PotHeight, Parameters.MaxPotHeight,
             "Метод возвращает некорректное минимальное значение параметра PotHeight.",
             TestName =
-                "Тест метода GetMaxValue: Получить минимальное значение параметра 'PotHeight'.")]
+                "Тест метода GetMaxValue: Получить максимальное значение параметра 'PotHeight'.")]
         public void Test_GetMaxValue_CorrectValue(ParameterType parameterType,
             double expectedValue, string message)
         {
@@ -73,7 +73,7 @@
         [TestCase(ParameterType.HandlesHeight,
             10,
             2.5,
-            "Метод задает некорректное значение параметра 'PotHeight'.")]
+            "Метод задает некорректное значение параметра 'HandlesHeight'.")]
         public void Test_SetValue_ParameterType_HandlesHeightMin(
             ParameterType parameterType,
             double HandlessHeightValue,
@@ -106,7 +106,8 @@
                 });
         }
 
-        [TestCase(12.5, "Ме")]
+        [TestCase(12.5, "Метод неверно высчитывает максимальное значение "
+                        + "параметра 'HandlessHeight'")]
         public void Test_UpdateHandlessHeightLimit(double exceptedValue, string message)
         {
             var tmpParameters = Parameters;
@@ -162,7 +163,7 @@
 
         [TestCase(ParameterType.HandlesThickness, 2000,
             "Метод задает некорректное значение параметра 'HandlesThickness'.")]
-        public void SetValue(ParameterType parameterType,
+        public void SetValueFailureHandlesThickness(ParameterType parameterType,
             double unexpectedValue, string message)
         {
             var parameters = Parameters;

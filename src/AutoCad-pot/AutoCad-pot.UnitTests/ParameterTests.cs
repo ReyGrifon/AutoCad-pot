@@ -86,7 +86,7 @@ namespace AutoCad_pot.UnitTests
         [TestCase(
             30,
             "Ошибка при сравнении.",
-            TestName = "Негативный тест метода Validate.")]
+            TestName = "Негативный тест метода Validate для зависимого параметра.")]
         public void Test_Parameter_EqualMinMax(
             double value,
             string message)
