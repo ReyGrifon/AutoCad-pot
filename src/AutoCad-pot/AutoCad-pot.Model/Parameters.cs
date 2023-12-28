@@ -72,12 +72,12 @@
         /// <summary>
         /// Словарь с параметрам модели.
         /// </summary>
-        private readonly Dictionary<ParameterType, Parameter> _parametersDictionary;
+        private readonly Dictionary<ParameterType, Parameter> _parameters;
 
         /// <summary>
         /// Словарь ошибок.
         /// </summary>
-        private readonly Dictionary<ParameterType, List<ArgumentException>> _errorDictionary;
+        private readonly Dictionary<ParameterType, List<ArgumentException>> _error;
 
         /// <summary>
         /// флаг для определения вида ручки.
@@ -90,7 +90,7 @@
         public Parameters()
         {
             HandleType = true;
-            _parametersDictionary =
+            _parameters =
                new Dictionary<ParameterType, Parameter>
                {
                     {
@@ -130,7 +130,7 @@
                             MinHandlesHeight)
                     }
                };
-            _errorDictionary = new Dictionary<ParameterType, List<ArgumentException>>
+            _error = new Dictionary<ParameterType, List<ArgumentException>>
             {
                 { ParameterType.PotHeight, new List<ArgumentException>() },
                 { ParameterType.PotDiameter, new List<ArgumentException>() },
@@ -146,7 +146,7 @@
         /// </summary>
         /// <param name="type">Тип параметра.</param>
         /// <returns>Параметр.</returns>
-        public Parameter this[ParameterType type] => _parametersDictionary[type];
+        public Parameter this[ParameterType type] => _parameters[type];
 
         /// <summary>
         /// Задать значение параметра.
@@ -155,10 +155,10 @@
         /// <param name="newValue">Новое значение для параметра. </param>
         public void SetValue(ParameterType parameterType, double newValue)
         {
-            _errorDictionary[parameterType].Clear();
+            _error[parameterType].Clear();
             try
             {
-                _parametersDictionary[parameterType].Value = newValue;
+                _parameters[parameterType].Value = newValue;
                 if (parameterType == ParameterType.HandlesHeight)
                 {
                     UpdateMaxHandlesThickness();
@@ -172,7 +172,7 @@
             }
             catch (ArgumentException exception)
             {
-                _errorDictionary[parameterType].Add(exception);
+                _error[parameterType].Add(exception);
 
                 if (parameterType == ParameterType.HandlesHeight && HandleType)
                 {
@@ -180,9 +180,9 @@
                 }
             }
 
-            if (_errorDictionary[parameterType].Any())
+            if (_error[parameterType].Any())
             {
-                throw new AggregateException(_errorDictionary[parameterType]);
+                throw new AggregateException(_error[parameterType]);
             }
         }
 
@@ -193,8 +193,8 @@
         /// </summary>
         private void UpdateErrorLimits(ParameterType type)
         {
-            _parametersDictionary[type].MaxValue = 0;
-            _parametersDictionary[type].MinValue = 0;
+            _parameters[type].MaxValue = 0;
+            _parameters[type].MinValue = 0;
         }
 
         /// <summary>
@@ -203,8 +203,8 @@
         /// </summary>
         public void UpdateMaxHandlesThickness()
         {
-            _parametersDictionary[ParameterType.HandlesThickness].MaxValue =
-                _parametersDictionary[ParameterType.HandlesHeight].Value / 2;
+            _parameters[ParameterType.HandlesThickness].MaxValue =
+                _parameters[ParameterType.HandlesHeight].Value / 2;
         }
 
         /// <summary>
@@ -213,17 +213,17 @@
         /// </summary>
         public void UpdateMinHandlesThickness()
         {
-            _parametersDictionary[ParameterType.HandlesThickness].MinValue =
-                _parametersDictionary[ParameterType.HandlesHeight].Value / 4;
+            _parameters[ParameterType.HandlesThickness].MinValue =
+                _parameters[ParameterType.HandlesHeight].Value / 4;
         }
 
         /// <summary>
         /// Обновляет параметры для ручки сотейника.
         /// </summary>
-        public void UpdateHandlesHeightLimit()
+        public void UpdateHandlesHeightDefaultLimit()
         {
-            _parametersDictionary[ParameterType.HandlesHeight].MaxValue = 12.5;
-            _parametersDictionary[ParameterType.HandlesHeight].Value = 10;
+            _parameters[ParameterType.HandlesHeight].MaxValue = 12.5;
+            _parameters[ParameterType.HandlesHeight].Value = 10;
         }
 
         /// <summary>
@@ -232,15 +232,15 @@
         /// </summary>
         public void UpdateMaxHandlesHeight()
         {
-            var maxLimit = _parametersDictionary[ParameterType.HandlesThickness].Value * 5;
+            var maxLimit = _parameters[ParameterType.HandlesThickness].Value * 5;
             if (maxLimit <= 20)
             {
-                _parametersDictionary[ParameterType.HandlesHeight].MaxValue =
+                _parameters[ParameterType.HandlesHeight].MaxValue =
                     maxLimit;
             }
             else
             {
-                _parametersDictionary[ParameterType.HandlesHeight].MaxValue = 20;
+                _parameters[ParameterType.HandlesHeight].MaxValue = 20;
             }
         }
     }

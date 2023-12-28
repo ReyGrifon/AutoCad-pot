@@ -327,7 +327,7 @@
             HandlesThicknessLabel.Visible = false;
             HandlesThicknessTextBox.Visible = false;
             HandlesThicknessLimitsLabel.Visible = false;
-            Parameters.UpdateHandlesHeightLimit();
+            Parameters.UpdateHandlesHeightDefaultLimit();
             UpdateLabel(ParameterType.HandlesHeight);
             HandlesHeightTextBox.Text = Convert.ToString(
                 Parameters[ParameterType.HandlesHeight].Value);

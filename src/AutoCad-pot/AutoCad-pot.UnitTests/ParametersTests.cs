@@ -111,7 +111,7 @@
         public void Test_UpdateHandlessHeightLimit(double exceptedValue, string message)
         {
             var tmpParameters = Parameters;
-            tmpParameters.UpdateHandlesHeightLimit();
+            tmpParameters.UpdateHandlesHeightDefaultLimit();
             var actualValue = tmpParameters[ParameterType.HandlesHeight].MaxValue;
             Assert.AreEqual(exceptedValue, actualValue, message);
         }
