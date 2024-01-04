@@ -176,56 +176,24 @@
                     _fields[currentParameter].BackColor = ErrorColor;
                 }
 
-                try
+                if (!Parameters.HandleType)
                 {
-                    if (currentParameter == ParameterType.HandlesThickness &&
-                        Parameters.HandleType)
-                    {
-                        UpdateLabel(ParameterType.HandlesHeight);
-                        Parameters.SetValue(
-                            ParameterType.HandlesHeight, 
-                            Convert.ToDouble(HandlesHeightTextBox.Text));
-                        _fields[ParameterType.HandlesHeight].BackColor = CorrectColor;
-                        _errors[ParameterType.HandlesHeight] = "";
-                    }
-                }
-                catch (AggregateException aggregateException)
-                {
-                    _errors[ParameterType.HandlesHeight] = "";
-
-                    foreach (ArgumentException exception in aggregateException.InnerExceptions)
-                    {
-                        _errors[ParameterType.HandlesHeight] +=
-                            ParameterType.HandlesHeight + exception.Message;
-                    }
-
-                    _fields[ParameterType.HandlesHeight].BackColor = ErrorColor;
+                    return;
                 }
 
-                try
+                switch (currentParameter)
                 {
-                    if (currentParameter == ParameterType.HandlesHeight &&
-                        Parameters.HandleType)
+                    case ParameterType.HandlesThickness:
                     {
-                        UpdateLabel(ParameterType.HandlesThickness);
-                        Parameters.SetValue(
-                            ParameterType.HandlesThickness,
-                            Convert.ToDouble(HandlesThicknessTextBox.Text));
-                        _fields[ParameterType.HandlesThickness].BackColor = CorrectColor;
-                        _errors[ParameterType.HandlesThickness] = "";
-                    }
-                }
-                catch (AggregateException aggregateException)
-                {
-                    _errors[ParameterType.HandlesThickness] = "";
-
-                    foreach (ArgumentException exception in aggregateException.InnerExceptions)
-                    {
-                        _errors[ParameterType.HandlesThickness] +=
-                            ParameterType.HandlesThickness + exception.Message;
+                        CheckDependentParameter(ParameterType.HandlesHeight);
+                        break;
                     }
 
-                    _fields[ParameterType.HandlesThickness].BackColor = ErrorColor;
+                    case ParameterType.HandlesHeight:
+                    {
+                        CheckDependentParameter(ParameterType.HandlesThickness);
+                        break;
+                    }
                 }
             }
         }
@@ -257,6 +225,31 @@
             }
 
             return true;
+        }
+
+        private void CheckDependentParameter(ParameterType type)
+        {
+            try
+            {
+                UpdateLabel(type);
+                Parameters.SetValue(
+                    type,
+                    Convert.ToDouble(_fields[type].Text));
+                _fields[type].BackColor = CorrectColor;
+                _errors[type] = "";
+            }
+            catch (AggregateException aggregateException)
+            {
+                _errors[type] = "";
+
+                foreach (ArgumentException exception in aggregateException.InnerExceptions)
+                {
+                    _errors[ParameterType.HandlesThickness] +=
+                        ParameterType.HandlesThickness + exception.Message;
+                }
+
+                _fields[ParameterType.HandlesThickness].BackColor = ErrorColor;
+            }
         }
 
         /// <summary>
